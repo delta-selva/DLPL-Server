@@ -1,0 +1,646 @@
+{% extends "layouts/base.html" %} {% block title %} Project {% endblock %} {%
+block stylesheets %}
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+/>
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/fontawesome-free/css/all.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css"
+/>
+<link rel="stylesheet" href="/static/assets/css/adminlte.min.css" />
+{% endblock stylesheets %} {% block content %}
+<div class="content-wrapper">
+  <section class="content-header" id="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>{{ project_name }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item">
+              <form
+                action="{{ url_for('home_blueprint.view_subtypes') }}"
+                method="POST"
+              >
+                <input
+                  type="hidden"
+                  name="project_name"
+                  value="{{ project_name }}"
+                />
+                <input
+                  type="hidden"
+                  name="project_type"
+                  value="{{ project_type }}"
+                />
+                <input
+                  type="hidden"
+                  name="project_dut"
+                  value="{{ project_dut }}"
+                />
+                <button
+                  type="submit"
+                  style="border: none; background: transparent; color: blue"
+                >
+                  Back
+                </button>
+              </form>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Scan Table -->
+          <div class="card" id="scan-table">
+            <div class="card-header">
+              <div class="card-tools">
+                <div class="btn-group btn-group-sm">
+                  <a
+                    href=""
+                    class="btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#add-type"
+                    ><i class="fas fa-plus"></i
+                  ></a>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- <button
+                type="button"
+                class="add"
+                data-toggle="modal"
+                data-target="#add-type"
+              >
+                Add
+              </button> -->
+
+              <table id="add-table" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>S.No</th>
+                    <th>Types</th>
+                    <th>Status</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% if subtypes %} {% for subtype in subtypes %}
+                  <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>
+                      <form
+                        action="{{ url_for('home_blueprint.subtype_details') }}"
+                        method="POST"
+                      >
+                        <input
+                          type="hidden"
+                          name="project_name"
+                          value="{{ project_name }}"
+                        />
+                        <input
+                          type="hidden"
+                          name="project_type"
+                          value="{{ project_type }}"
+                        />
+                        <input
+                          type="hidden"
+                          name="project_dut"
+                          value="{{ project_dut }}"
+                        />
+                        <input
+                          type="hidden"
+                          name="subtype_name"
+                          value="{{ subtype['subtype_name'] }}"
+                        />
+
+                        <button
+                          type="submit"
+                          style="
+                            border: none;
+                            background: transparent;
+                            color: blue;
+                          "
+                        >
+                          {{ subtype['subtype_name'] }}
+                        </button>
+                      </form>
+                    </td>
+                    <td>
+                      <span class="status {{ subtype['status'] }}">
+                        {{ subtype['status'] }}
+                      </span>
+                    </td>
+                    <td>
+                      <!-- Edit Button -->
+                      <a
+                        href="#"
+                        data-toggle="modal"
+                        data-target="#edit_conf"
+                        data-subtype="{{ subtype['subtype_name'] }}"
+                      >
+                        <i class="fas fa-edit"></i>
+                      </a>
+                    </td>
+
+                    <td>
+                      <!-- Delete Form -->
+                      <form
+                        id="delete-form-{{ subtype['subtype_name']  }}"
+                        action="{{ url_for('home_blueprint.delete_type') }}"
+                        method="POST"
+                        style="display: inline"
+                      >
+                        <input
+                          type="hidden"
+                          name="project_name"
+                          value="{{ project_name }}"
+                        />
+                        <input
+                          type="hidden"
+                          name="project_type"
+                          value="{{ project_type }}"
+                        />
+                        <input
+                          type="hidden"
+                          name="project_dut"
+                          value="{{ project_dut }}"
+                        />
+                        <input
+                          type="hidden"
+                          name="subtype_name"
+                          value="{{ subtype['subtype_name'] }}"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-danger btn-sm"
+                          onclick="deleteType('{{ subtype['subtype_name'] }}');"
+                          style="border: none; background: transparent"
+                        >
+                          <i class="fas fa-trash" style="color: #007bff"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  <!-- Edit Modal -->
+                  <div
+                    class="modal fade"
+                    id="edit_conf"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="editConfLabel"
+                    aria-hidden="true"
+                  >
+                    <div class="modal-dialog modal-lg" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="editConfLabel">
+                            Edit Type
+                          </h5>
+                          <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                          >
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <form
+                            method="POST"
+                            action="{{ url_for('home_blueprint.edit_subtype', subtype_name=subtype['subtype_name']) }}"
+                          >
+                            <input
+                              type="hidden"
+                              name="project_name"
+                              value="{{ project_name }}"
+                            />
+                            <input
+                              type="hidden"
+                              name="project_type"
+                              value="{{ project_type }}"
+                            />
+                            <input
+                              type="hidden"
+                              name="project_dut"
+                              value="{{ project_dut }}"
+                            />
+
+                            <div class="form-group">
+                              <label for="subtype_name">Type Name</label>
+                              <input
+                                type="text"
+                                class="form-control"
+                                name="subtype_name"
+                                value="{{ subtype['subtype_name'] }}"
+                                required
+                              />
+                            </div>
+
+                            <div class="modal-footer">
+                              <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-dismiss="modal"
+                              >
+                                Close
+                              </button>
+                              <button type="submit" class="btn btn-primary">
+                                Save changes
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %} {% else %}
+                  <tr>
+                    <td colspan="5">No types found.</td>
+                  </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal fade" id="add-type">
+    <div class="modal-dialog" style="max-width: 500px">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Add Type</h4>
+
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="card">
+            <!-- Add Button for New Rows in Top Right Corner -->
+            <div class="d-flex justify-content-between">
+              <!-- Upload JSON Button -->
+              <button
+                type="button"
+                id="uploadJson"
+                class="btn btn-secondary mb-3"
+                data-project-id="{{ project_id }}"
+              >
+                <i class="fas fa-file-upload"></i> Upload JSON
+              </button>
+
+              <input
+                type="file"
+                id="jsonFileInput"
+                accept=".json"
+                style="display: none; margin-top: -5px"
+              />
+
+              <button
+                type="button"
+                id="addDetail"
+                class="btn btn-primary mb-3"
+                style="margin-top: -5px"
+              >
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <div class="card-body-1">
+              <form
+                method="post"
+                action="{{ url_for('home_blueprint.add_type') }}"
+                enctype="multipart/form-data"
+              >
+                <input
+                  type="hidden"
+                  name="project_name"
+                  value="{{ project_name }}"
+                />
+                <input
+                  type="hidden"
+                  name="project_type"
+                  value="{{ project_type }}"
+                />
+                <input
+                  type="hidden"
+                  name="project_dut"
+                  value="{{ project_dut }}"
+                />
+
+                <!-- Container for Detail Rows -->
+                <div id="detailsContainer">
+                  <div class="row detail position-relative top-margin">
+                    <div class="col-sm-10">
+                      <div class="form-group">
+                        <label for="subtype">Type</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="subtype[]"
+                          placeholder="Type"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <!-- Remove Row Button -->
+                    <button
+                      type="button"
+                      class="removeDetail btn btn-danger btn-sm position-absolute"
+                      style="
+                        top: 5px;
+                        right: 30px;
+                        width: 24px;
+                        height: 24px;
+                        padding: 0;
+                      "
+                    >
+                      <i class="fas fa-minus" style="font-size: 12px"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Modal Footer for Close and Submit -->
+                <div class="modal-footer justify-content-between">
+                  <button
+                    type="button"
+                    class="btn btn-default"
+                    data-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %} {% block javascripts %}
+<script src="/static/assets/plugins/jquery/jquery.min.js"></script>
+<script src="/static/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/static/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/assets/js/adminlte.min.js"></script>
+<script src="/static/assets/js/demo.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+  .status.To-Do {
+    padding: 2px 4px;
+    background: #ab1b0c;
+    color: var(--white);
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .status.InProgress {
+    padding: 2px 4px;
+    background: #f7c04b;
+    color: var(--white);
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .status.Done {
+    padding: 2px 4px;
+    background: #4caf50;
+    color: var(--white);
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .card-body-1 {
+    position: relative;
+    padding-top: 70px;
+  }
+
+  .add {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    background: var(--blue);
+    text-decoration: none;
+    color: var(--white);
+    border-radius: 6px;
+    width: 100px;
+    margin: 10px;
+  }
+  .top-margin {
+    margin-left: 20px;
+  }
+  #detailsContainer {
+    margin-top: -40px;
+    max-height: 300px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+  }
+</style>
+
+<!-- JavaScript for JSON Upload -->
+
+<script>
+  $(function () {
+    // Initialize DataTable
+    $("#add-table").DataTable({
+      responsive: true,
+      autoWidth: false,
+    });
+  });
+  document.getElementById("uploadJson").addEventListener("click", function () {
+    document.getElementById("jsonFileInput").click(); // Open file dialog
+  });
+
+  document
+    .getElementById("jsonFileInput")
+    .addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      const projectId = document.getElementById("uploadJson").dataset.projectId; // Get project_id here
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            const jsonData = JSON.parse(e.target.result);
+            console.log("Uploaded JSON Data:", jsonData);
+
+            // Send JSON data to the server via AJAX
+            fetch(`/add_type`, {
+              // Use projectId variable
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}", // CSRF token if enabled
+              },
+              body: JSON.stringify({
+                project_name: "{{ project_name }}",
+                project_type: "{{ project_type }}",
+                project_dut: "{{ project_dut }}",
+                type_details: jsonData,
+              }),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.success) {
+                  // Redirect to view_subtypes page
+                  window.location.href = `/view_all_subtype?project_name=${encodeURIComponent(
+                    "{{ project_name }}"
+                  )}&project_type=${encodeURIComponent(
+                    "{{ project_type }}"
+                  )}&project_dut=${encodeURIComponent("{{ project_dut }}")}`;
+                } else {
+                  Swal.fire({
+                    title: "Error",
+                    text: "Failed to add report details.",
+                    icon: "error",
+                    confirmButtonText: "OK",
+                  });
+                }
+              })
+              .catch((error) =>
+                console.error("Error uploading JSON data:", error)
+              );
+          } catch (error) {
+            console.error("Error parsing JSON file:", error);
+            Swal.fire({
+              title: "Invalid JSON",
+              text: "Invalid JSON file. Please try again.",
+              icon: "error",
+              confirmButtonText: "OK",
+            });
+          }
+        };
+        reader.readAsText(file);
+      }
+    });
+</script>
+
+<script>
+  // Function to Add New Detail Row
+  document.getElementById("addDetail").addEventListener("click", function () {
+    const detailDiv = document.createElement("div");
+    detailDiv.classList.add("row", "detail", "position-relative", "mt-3");
+    detailDiv.style.marginLeft = "20px";
+    detailDiv.innerHTML = `
+
+                    <div class="col-sm-10">
+                      <div class="form-group">
+                        <label for="subtype">Type</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          name="subtype[]"
+                          placeholder="Type"
+                          required
+                        />
+                      </div>
+                    </div>
+                   
+                    <button
+                      type="button"
+                      class="removeDetail btn btn-danger btn-sm position-absolute"
+                      style="
+                        top: 5px;
+                        right: 30px;
+                        width: 24px;
+                        height: 24px;
+                        padding: 0;
+                      "
+                    >
+                      <i class="fas fa-minus" style="font-size: 12px"></i>
+                    </button>
+
+            `;
+    document.getElementById("detailsContainer").appendChild(detailDiv);
+  });
+
+  // Event Delegation for Removing Detail Rows
+  document
+    .getElementById("detailsContainer")
+    .addEventListener("click", function (e) {
+      if (
+        e.target.classList.contains("removeDetail") ||
+        e.target.closest(".removeDetail")
+      ) {
+        e.target.closest(".detail").remove();
+      }
+    });
+</script>
+
+<script>
+  $(document).ready(function () {
+    // Add click event to the subtype links
+    $(document).on("click", ".subtype-link", function (event) {
+      event.preventDefault(); // Prevent the default link behavior
+
+      // Get the subtype name and project name from the clicked element's data attributes
+      var subtypeName = $(this).data("subtype-name");
+      var projectName = $(this).data("project-name");
+
+      console.log("subtypeName:", subtypeName);
+      console.log("projectName:", projectName);
+
+      // Make an AJAX call to fetch the details for the clicked subtype
+      $.ajax({
+        url: "{{ url_for('home_blueprint.subtype_details') }}",
+        type: "GET",
+        data: {
+          subtype_name: subtypeName,
+          project_name: projectName,
+        },
+      });
+    });
+  });
+
+  function deleteType(subtype_name) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById("delete-form-" + subtype_name).submit();
+      }
+    });
+  }
+</script>
+{% endblock javascripts %}

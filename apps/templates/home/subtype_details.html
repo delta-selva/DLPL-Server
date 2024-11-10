@@ -1,0 +1,225 @@
+{% extends "layouts/base.html" %} {% block title %} Agent Management {% endblock
+%} {% block stylesheets %}
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+/>
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/fontawesome-free/css/all.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css"
+/>
+<link rel="stylesheet" href="/static/assets/css/adminlte.min.css" />
+{% endblock stylesheets %} {% block content %}
+
+<div class="content-wrapper">
+  <!-- Page header -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>{{ project_name }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item">
+              <form action="{{ url_for('home_blueprint.view_all_subtype') }}" method='POST'>
+                <input type="hidden" name="project_name" value="{{ project_name }}">
+                <input type="hidden" name="project_type" value="{{ project_type }}">
+                <input type="hidden" name="project_dut" value="{{ project_dut }}">
+                
+                <button
+                  type="submit"
+                  style="border: none; background: transparent; color: blue"
+                >
+                  Back
+                </button>
+              </form>
+           
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- Content Wrapper. Contains page content -->
+    <!-- <div class="content-wrapper"> -->
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <!-- Scan Table -->
+            <div class="card" id="scan-table">
+              <div class="card-body">
+                <table id="example2" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th class="text-center">S.No</th>
+                      <th class="text-center">Date</th>
+                      <th class="text-center">Time</th>
+                      <!-- <th class="text-center">Project Name</th>
+                    <th class="text-center">Test Case</th> -->
+                      <th class="text-center">Agent Name</th>
+                      <th class="text-center">Engineer Names</th>
+                      <th class="text-center">View</th>
+                      <th class="text-center">Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for upload in uploads %}
+                    <tr>
+                      <td class="text-center">{{ loop.index }}</td>
+                      <!-- Upload Date -->
+                      <td class="text-center">{{ upload[1] }}</td>
+                      <!-- Upload Time -->
+                      <td class="text-center">{{ upload[2] }}</td>
+                      <!-- Project Name -->
+                      <!-- <td class="text-center">{{ upload[3] }}</td> -->
+                      <!-- Test Case -->
+                      <!-- <td class="text-center">{{ upload[4] }}</td> -->
+
+                      <!-- Agent Name -->
+                      <td class="text-center">{{ upload[0] }}</td>
+                      <!-- Engineer names list -->
+                      <td class="text-center">
+                        {% if upload[8] %} {{ upload[8] | join(', ') }} {% else
+                        %} No engineers {% endif %}
+                      </td>
+                      <td class="text-center">
+                        <form action="{{ url_for('home_blueprint.view_subtype_report_files') }}" method="POST" style="display: inline;">
+                          <input type="hidden" name="project_name" value="{{ project_name }}">
+                          <input type="hidden" name="id" value="{{ upload[7]}}">
+                          <input type="hidden" name="project_type" value="{{ project_type }}">
+                          <input type="hidden" name="project_dut" value="{{ project_dut }}">
+                          <input type="hidden" name="subtype_name" value="{{ subtype_name }}">
+                          <button type="submit" style="border: none; background: transparent; margin-left: 5px;">
+                            <i class="fas fa-eye" style="color: #007bff"></i>
+                          </button>
+                        </form>
+                       
+                      </td>
+                      <td class="text-center">
+                        <a
+                          class="btn btn-danger btn-sm"
+                          onclick="confirmDelete('{{ upload[7] }}')"
+                        >
+                          <i class="fas fa-trash"></i> Delete
+                        </a>
+                      </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                      <td colspan="7" class="text-center">
+                        No file uploads available.
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Report Table, initially hidden -->
+            <div id="report-section" style="display: none">
+              <div class="card">
+                <div class="card-body" id="report-container">
+                  <!-- Files content will be loaded here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock content %} 
+{% block javascripts %}
+<script src="/static/assets/plugins/jquery/jquery.min.js"></script>
+<script src="/static/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/static/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/assets/js/adminlte.min.js"></script>
+
+<script>
+  $(function () {
+    // Initialize DataTable
+    $("#example2").DataTable({
+      responsive: true,
+      autoWidth: false,
+    });
+
+    // View report files on clicking 'View Files'
+    $(document).on("click", ".view-report", function (e) {
+      e.preventDefault();
+      var id = $(this).data("id");
+
+      $.ajax({
+        url: "{{ url_for('home_blueprint.view_subtype_report_files') }}",
+        type: "GET",
+        data: { id: id },
+        success: function (response) {
+          $("#report-section").show();
+          $("#report-container").html(response);
+        },
+        error: function (xhr, status, error) {
+          console.error("Error:", error);
+        },
+      });
+    });
+  });
+</script>
+
+<script>
+  function confirmDelete(scanId) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Perform the delete action via AJAX
+        $.ajax({
+          url: "{{ url_for('home_blueprint.delete_report') }}", // Your Flask route for deleting
+          type: "POST",
+          data: { scan_id: scanId },
+          success: function (response) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your report has been deleted.",
+              icon: "success",
+              timer: 2000,
+              showConfirmButton: false,
+            }).then(() => {
+              // Reload the page or remove the deleted row
+              location.reload();
+            });
+          },
+          error: function (xhr, status, error) {
+            Swal.fire({
+              title: "Error",
+              text: "Something went wrong: " + error,
+              icon: "error",
+            });
+          },
+        });
+      }
+    });
+  }
+</script>
+{% endblock javascripts %}

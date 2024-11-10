@@ -1,0 +1,429 @@
+{% extends "layouts/base.html" %} {% block title %} Agent Management {% endblock
+%} {% block stylesheets %}
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+/>
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/fontawesome-free/css/all.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css"
+/>
+<link rel="stylesheet" href="/static/assets/css/adminlte.min.css" />
+{% endblock stylesheets %} {% block content %}
+<div class="content-wrapper">
+  <!-- Page header -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Agent</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Agent</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Create Agent Form -->
+          <!-- <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Create New Agent</h3>
+            </div>
+            <div class="card-body">
+              <form id="create-agent-form">
+                <div class="form-group">
+                  <label for="agent-name">Agent Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="agent-name"
+                    placeholder="Enter agent name"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  Generate API Key
+                </button>
+              </form>
+              <div id="creation-result" class="mt-3"></div>
+            </div>
+          </div> -->
+
+          <!-- Existing Agents Table -->
+          <div class="card">
+            <div class="card-header">
+              <div class="d-flex justify-content-between align-items-center w-100">
+                <!-- Download Button -->
+                <a href="/download_agent_installer" class="btn btn-secondary btn-sm">
+                  <i class="fas fa-download"></i> Download Agent
+                </a>
+                <!-- Existing Plus Button -->
+                <div class="card-tools">
+                  <div class="btn-group btn-group-sm">
+                    <a
+                      href=""
+                      class="btn btn-primary"
+                      data-toggle="modal"
+                      data-target="#test_conf"
+                    >
+                      <i class="fas fa-plus"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <table
+                id="agents-table"
+                class="table table-bordered table-striped"
+              >
+                <thead>
+                  <tr>
+                    <th class="text-center">Agent Name</th>
+                    <th class="text-center">Engineers</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Rows will be dynamically populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="modal fade" id="test_conf">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Agent</h4>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body">
+            <div class="tab-content">
+              <div class="active tab-pane" id="project">
+                
+                <div id="creation-result" class="mt-3"></div>
+              </div>
+                <form id="create-agent-form">
+                  <div class="form-group">
+                    <input
+                      type="hidden"
+                      name="type"
+                      value="project_conf"
+                      class="form-control"
+                    />
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="agent-name">Name</label>
+                        <input
+                          type="text"
+                          name="name"
+                          class="form-control"
+                          id="agent-name"
+                          placeholder="Name"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="engineer-select">Engineer</label>
+                        <select id="engineer-select" name="engineer-select" class="form-control" placeholder="Select engineers">
+                          {% for engineers in engineers %}
+                          <option value="{{ engineers.employee_name }}">
+                            {{ engineers.employee_name }}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+
+                    
+                  </div>
+
+                  <div class="modal-footer justify-content-between">
+                    <button
+                      type="button"
+                      class="btn btn-default"
+                      data-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                      Submit
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <!-- /.tab-content -->
+          </div>
+          <!-- /.card-body -->
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+  </div>
+</div>
+{% endblock content %} {% block javascripts %}
+<script src="/static/assets/plugins/jquery/jquery.min.js"></script>
+<script src="/static/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/static/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/assets/js/adminlte.min.js"></script>
+<script src="/static/assets/js/demo.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  $(function () {
+    const table = $("#agents-table").DataTable({
+      responsive: true,
+      autoWidth: false,
+      "columnDefs": [
+      { "className": "text-center", "targets": "_all" }
+    ]
+    });
+
+    // Function to fetch and display agents
+    // Function to fetch and display agents
+function fetchAgents() {
+  $.ajax({
+    url: "/agents",
+    method: "GET",
+    success: function (response) {
+  
+      response.agents.forEach((agent) => {
+        table.row
+          .add([
+            `<td class="text-center">${agent.agent_name}</td>`, // Display agent name
+            `<td class="text-center">${agent.engineers || 'No engineers'}</td>`, // Display associated engineers or 'No engineers'
+            `<td class="text-center">
+              <button class="btn btn-danger btn-sm" onclick="deleteAgent('${agent.agent_name}')">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </td>`,
+          ])
+          .draw(false);
+      });
+    },
+    error: function (xhr) {
+      console.error("Error fetching agents:", xhr.responseJSON.error);
+    },
+  });
+}
+
+// Initial fetch of agents
+fetchAgents();
+$("#create-agent-form").on("submit", function (e) {
+  e.preventDefault();
+  const agentName = $("#agent-name").val();
+  const selectedEngineers = $("#engineer-select").val(); // Get selected engineers as an array
+
+  $.ajax({
+    url: "/create/agents", 
+    method: "POST",
+    contentType: "application/json",
+    data: JSON.stringify({
+      name: agentName,
+      engineers: selectedEngineers, // Send the selected engineers as an array
+    }),
+    success: function (response) {
+      Swal.fire({
+        title: "Success!",
+        html: `
+          Agent created successfully!<br>
+          API Key: <code id="api-key">${response.api_key}</code><br><br>
+          <button id="copy-api-key" class="btn btn-primary">Copy API Key</button>
+        `,
+        icon: "success",
+        showConfirmButton: false, // Hide the default OK button
+        didOpen: () => {
+          // Attach the copy event listener to the button
+          const copyButton = document.getElementById("copy-api-key");
+          const apiKeyElement = document.getElementById("api-key");
+
+          copyButton.addEventListener("click", () => {
+            const apiKey = apiKeyElement.textContent;
+            navigator.clipboard
+              .writeText(apiKey)
+              .then(() => {
+                // Show a new SweetAlert2 popup with only the OK button
+                Swal.fire({
+                  title: "Copied!",
+                  text: "API Key has been copied to your clipboard.",
+                  icon: "success",
+                  confirmButtonText: "OK",
+                });
+              })
+              .catch((err) => {
+                Swal.fire({
+                  title: "Error!",
+                  text: "Failed to copy API Key.",
+                  icon: "error",
+                  confirmButtonText: "OK",
+                });
+              });
+          });
+        },
+      });
+
+      // Ensure the response contains a valid engineers array
+      const engineerNames = Array.isArray(response.engineers) && response.engineers.length > 0
+        ? response.engineers.join(", ")
+        : 'No engineers'; // Fallback to 'No engineers' if none are selected
+
+      // Add the new row to DataTable
+      table.row.add([
+        agentName,             // Agent Name
+        selectedEngineers,         // Engineer Names
+        `<button class="btn btn-danger btn-sm" onclick="deleteAgent('${agentName}')">
+           <i class="fas fa-trash"></i> Delete
+         </button>`
+      ]).draw(false);
+
+      // Clear the input fields
+      $("#agent-name").val("");
+      $("#engineer-select").val(null).trigger('change'); // Clear the engineer select input and trigger a UI update if using select2 or similar
+    },
+    error: function (xhr) {
+      Swal.fire({
+        title: "Error!",
+        text: xhr.responseJSON.error || "An error occurred while creating the agent.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    },
+  });
+});
+
+
+
+    // Function to delete an agent
+    window.deleteAgent = function (agent) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: `You are about to delete agent "${agent}".`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/agents/delete/${agent}`, {
+            method: "DELETE",
+          })
+            .then((response) => {
+              if (!response.ok) {
+                return response.json().then((error) => {
+                  throw new Error(error.error || "Unknown error");
+                });
+              }
+              return response.json();
+            })
+            .then((data) => {
+              Swal.fire("Deleted!", "Agent has been deleted.", "success");
+
+              // Remove the row from DataTable
+              table.rows().every(function () {
+                const row = this.node();
+                if ($(row).find("td").first().text() === agent) {
+                  table.row(row).remove().draw(false);
+                }
+              });
+            })
+            .catch((error) => Swal.fire("Error!", error.message, "error"));
+        }
+      });
+    };
+  });
+</script>
+
+
+
+<style>
+  .dropdown-container {
+    position: relative;
+  }
+
+  .dropdown-options {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    z-index: 1000;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px; /* Optional padding */
+    box-sizing: border-box;
+  }
+
+  .dropdown-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 10px; /* Space between columns */
+    align-items: center; /* Align items in the center vertically */
+  }
+
+  .dropdown-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Space between rows within the column */
+  }
+
+  .form-check {
+    display: flex;
+    align-items: center;
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis for long text */
+    white-space: nowrap; /* Prevent line breaks */
+    width: 100%; /* Ensure it takes full width of the column */
+  }
+
+  .form-check-label {
+    flex: 1; /* Allow label to grow */
+    margin-left: 5px; /* Space between checkbox and label */
+  }
+
+  .form-control {
+    cursor: pointer;
+  }
+</style>
+
+{% endblock javascripts %}

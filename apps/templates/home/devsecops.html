@@ -1,0 +1,2491 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} DevSecops {% endblock %} 
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/assets/plugins/fontawesome-free/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/static/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/assets/css/adminlte.min.css">
+  <link rel="stylesheet" href="/static/assets/plugins/toastr/toastr.min.css">
+{% endblock stylesheets %}
+
+{% block content %} 
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <div>
+      <!-- Begin alerts -->                
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      {% if category == 'success' %}
+            <body onload="doMyAlerts('{{message}}','{{category}}');"></body>
+            <script>
+                function doMyAlerts(message,category)
+                        {
+                            swal.fire({
+                            title: "Success",
+                            text: message,
+                            icon: category,
+                            closeOnConfirm: false
+                            });
+                        }
+                </script>
+      {% endif %}
+      {% if category == 'error' %}
+        <body onload="doerrorAlerts('{{message}}','{{category}}');"></body>
+            <script>
+                function doerrorAlerts(message,category)
+                        {
+                            swal.fire({
+                            title: "Error",
+                            text: message,
+                            icon: category,
+                            closeOnConfirm: false
+                            });
+                        }
+                </script>
+      {% endif %}
+      {% if category == 'warning' %}
+        <body onload="doerrorAlerts('{{message}}','{{category}}');"></body>
+            <script>
+                function doerrorAlerts(message,category)
+                        {
+                            swal.fire({
+                            title: "warning",
+                            text: message,
+                            icon: category,
+                            closeOnConfirm: false
+                            });
+                        }
+                </script>
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <!-- End alerts -->
+</div>
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>DevSecops</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item active">DevSecops</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card card-primary card-tabs">
+              <div class="card-header p-0 pt-1">
+                <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                  <li class="nav-item"><a class="nav-link active" href="#prebuildscan" data-toggle="tab">Pre Build</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#predeployment" data-toggle="tab">Pre Deployment</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#dynamicscan" data-toggle="tab">Post deployment</a></li>
+                  <!-- <li class="nav-item"><a class="nav-link" href="#cloudscan" data-toggle="tab">Cloud</a></li>-->
+                </ul>
+              </div><!-- /.card-header -->
+              <div class="card-body">
+                <div class="tab-content">
+                  <div class="active tab-pane" id="prebuildscan">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-code-branch"></i> &nbsp;Create Prebuild Scans</h3>
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body">
+                            <ul class="nav nav-pills flex-column">
+                              <li class="nav-item ">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#sec_scan">
+                                  <i class="fas fa-key"></i> &nbsp;&nbsp;Secrets Scan 
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#sca_scan">
+                                  <i class="fas fa-sitemap"></i> &nbsp;&nbsp;SCA
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#sast_model_scan">
+                                  <i class="fas fa-file-code"></i> &nbsp;&nbsp;&nbsp;SAST
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#iac_model_scan">
+                                  <i class="fab fa-docker"></i> &nbsp;&nbsp;IaC Scan
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-cog mr-1"></i> &nbsp;Pre Build Configuration</h3>
+                            
+                          </div>
+                          <div class="card-body">
+                            <div class="card card-primary card-outline card-tabs">
+                              <div class="card-header p-0 pt-1 border-bottom-0">
+                                <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                                  <li class="nav-item">
+                                    <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">Setup Source</a>
+                                  </li>
+                                  <li class="nav-item">
+                                    <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile" aria-selected="false">Create Project</a>
+                                  </li>
+                                  <li class="nav-item">
+                                    <a class="nav-link" id="custom-tabs-three-messages-tab" data-toggle="pill" href="#custom-tabs-three-messages" role="tab" aria-controls="custom-tabs-three-messages" aria-selected="false">Create Application</a>
+                                  </li>
+                                </ul>
+                              </div>
+                              <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-three-tabContent">
+                                  <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                                    <div class="card">
+                                      <div class="card-header">
+                                        <div class="card-tools">
+                                          <div class="btn-group btn-group-sm">
+                                            <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#pre_build"><i class="fas fa-plus"></i></a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="card-body">
+                                        <div class="table-responsive">
+                                          <table class="table m-0">
+                                            <thead>
+                                            <tr>
+                                              <th>Created</th>
+                                              <th class="text-center">Source</th>
+                                              <th class="text-center">Name</th>
+                                              <th class="text-center">Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for prebuild in data["prebuild"] %}
+                                              <tr>
+                                              
+                                                <td >{{prebuild.time}}</td>
+                                                {% if "aws"==prebuild.source %}
+                                                <td class="text-center"><i class="fab fa-aws mr-1"></i></td>
+                                                {% endif %}
+                                                {% if "git"==prebuild.source %}
+                                                <td class="text-center"><i class="fab fa-github mr-1"></i></td>
+                                                {% endif %}
+                                                {% if "gitlab"==prebuild.source %}
+                                                <td class="text-center"><i class="fab fa-gitlab mr-1"></i></td>
+                                                {% endif %}
+                                                <td class="text-center">{{prebuild.source_name}}</td>
+                                                <td class="text-center py-0 align-middle">
+                                                  <div class="btn-group btn-group-sm">
+                                                    <a href="/devsecops?delete_conf={{prebuild.ID}}" class="btn btn-default"><i class="fas fa-trash"></i></a>
+                                                  </div>
+                                                  
+                                                </td>
+                                              </tr>
+                                              {% endfor %}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                     
+                                    </div>
+                                  </div>
+                                  <div class="tab-pane fade" id="custom-tabs-three-profile" role="tabpanel" aria-labelledby="custom-tabs-three-profile-tab">
+                                    <div class="card">
+                                      <div class="card-header">
+                                        <div class="card-tools">
+                                          <div class="btn-group btn-group-sm">
+                                            <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#project_create"><i class="fas fa-plus"></i></a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="card-body">
+                                        <div class="table-responsive">
+                                          <table class="table m-0">
+                                            <thead>
+                                            <tr>
+                                              <th >Project Name</th>
+                                              <th class="text-center">Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for project in data["projects"] %}
+                                              <tr>
+                                                <td >{{project}}</td>
+                                                <td class="text-center py-0 align-middle">
+                                                  <div class="btn-group btn-group-sm">
+                                                    <a href="/devsecops?delete_project={{project}}" class="btn btn-default"><i class="fas fa-trash"></i></a>
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                              {% endfor %}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                     
+                                    </div>
+                                  </div>
+                                  <div class="tab-pane fade" id="custom-tabs-three-messages" role="tabpanel" aria-labelledby="custom-tabs-three-messages-tab">
+                                    <div class="card">
+                                      <div class="card-header">
+                                        <div class="card-tools">
+                                          <div class="btn-group btn-group-sm">
+                                            <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#app_create_import"><i class="fas fa-plus"></i></a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="card-body">
+                                        <div class="table-responsive">
+                                          <table class="table m-0">
+                                            <thead>
+                                            <tr>
+                                              <th >Project Name</th>
+                                              <th >Application Name</th>
+                                              <th class="text-center">Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for app in data["apps"] %}
+                                              <tr>
+                                                {% for key, value in app.items() %}
+                                                <td >{{key}}</td>
+                                                <td >{{value}}</td>
+                                                <td class="text-center py-0 align-middle">
+                                                  <div class="btn-group btn-group-sm">
+                                                    <a href="/devsecops?delete_app={{key}}&app={{value}}" class="btn btn-default"><i class="fas fa-trash"></i></a>
+                                                  </div>
+                                                </td>
+                                                {% endfor %}
+                                              </tr>
+                                              {% endfor %}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                     
+                                    </div>
+                                  </div>
+                        
+                                </div>
+                              </div>
+                              <!-- /.card -->
+                            </div>
+                            
+                            
+                          </div>
+                        </div>               
+                      </div>
+                      
+                      <!-- /.col -->
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="predeployment">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-code-branch"></i> &nbsp;Create Container Scans</h3>
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body">
+                            <ul class="nav nav-pills flex-column">
+                              <li class="nav-item ">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#public_image_scan">
+                                  <i class="fas fa-box-open"></i> &nbsp;&nbsp;Public Container Vuln Scan 
+                                </a>
+                              </li>
+                              
+                              <li class="nav-item ">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#custom_image_scan">
+                                  <i class="fas fa-box"></i> &nbsp;&nbsp;Custom Container Vuln Scan 
+                                </a>
+                              </li>
+                              
+                            </ul>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-cog mr-1"></i> &nbsp;Pre Deployment Configuration</h3>
+                            
+                          </div>
+                          <div class="card-body">
+                            <div class="card card-secondary card-tabs">
+                              <div class="card-header p-0 pt-1 border-bottom-0">
+                                <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                                  <li class="nav-item">
+                                    <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-dast-script" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">Container Image Configuration</a>
+                                  </li>
+                                  
+                                </ul>
+                              </div>
+                              <div class="card-body">
+                                  <div class="tab-content" id="custom-tabs-three-tabContent">
+                                    <div class="tab-pane fade show active" id="custom-tabs-three-dast-script" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                                        <div class="card  card-tabs">
+                                        <div class="card-header p-0 pt-1 border-bottom-0">
+                                          <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                                            <li class="nav-item">
+                                              <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-predeploy-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">Setup Source</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" href="#custom-tabs-three-predeploy-profile" role="tab" aria-controls="custom-tabs-three-profile" aria-selected="false">Create Project</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="custom-tabs-three-messages-tab" data-toggle="pill" href="#custom-tabs-three-predeploy-messages" role="tab" aria-controls="custom-tabs-three-messages" aria-selected="false">Upload Container Image</a>
+                                            </li>
+                                          </ul>
+                                        </div>
+                                        <div class="card-body">
+                                          <div class="tab-content" id="custom-tabs-three-tabContent">
+                                            <div class="tab-pane fade show active" id="custom-tabs-three-predeploy-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                                              <div class="card">
+                                                <div class="card-header">
+                                                  <div class="card-tools">
+                                                    <div class="btn-group btn-group-sm">
+                                                      <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#pre_build"><i class="fas fa-plus"></i></a>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="card-body">
+                                                  <div class="table-responsive">
+                                                    <table class="table m-0">
+                                                      <thead>
+                                                      <tr>
+                                                        <th>Created</th>
+                                                        <th class="text-center">Source</th>
+                                                        <th class="text-center">Name</th>
+                                                        <th class="text-center">Action</th>
+                                                      </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        {% for prebuild in data["prebuild"] %}
+                                                        <tr>
+                                                        
+                                                          <td >{{prebuild.time}}</td>
+                                                          {% if "aws"==prebuild.source %}
+                                                          <td class="text-center"><i class="fab fa-aws mr-1"></i></td>
+                                                          {% endif %}
+                                                          {% if "git"==prebuild.source %}
+                                                          <td class="text-center"><i class="fab fa-github mr-1"></i></td>
+                                                          {% endif %}
+                                                          {% if "gitlab"==prebuild.source %}
+                                                          <td class="text-center"><i class="fab fa-gitlab mr-1"></i></td>
+                                                          {% endif %}
+                                                          <td class="text-center">{{prebuild.source_name}}</td>
+                                                          <td class="text-center py-0 align-middle">
+                                                            <div class="btn-group btn-group-sm">
+                                                              <a href="/devsecops?delete_conf={{prebuild.ID}}" class="btn btn-default"><i class="fas fa-trash"></i></a>
+                                                            </div>
+                                                            
+                                                          </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                      </tbody>
+                                                    </table>
+                                                  </div>
+                                                </div>
+                                              
+                                              </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="custom-tabs-three-predeploy-profile" role="tabpanel" aria-labelledby="custom-tabs-three-profile-tab">
+                                              <div class="card">
+                                                <div class="card-header">
+                                                  <div class="card-tools">
+                                                    <div class="btn-group btn-group-sm">
+                                                      <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#project_create"><i class="fas fa-plus"></i></a>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="card-body">
+                                                  <div class="table-responsive">
+                                                    <table class="table m-0">
+                                                      <thead>
+                                                      <tr>
+                                                        <th >Project Name</th>
+                                                        <th class="text-center">Action</th>
+                                                      </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        {% for project in data["projects"] %}
+                                                        <tr>
+                                                          <td >{{project}}</td>
+                                                          <td class="text-center py-0 align-middle">
+                                                            <div class="btn-group btn-group-sm">
+                                                              <a href="/devsecops?delete_project={{project}}" class="btn btn-default"><i class="fas fa-trash"></i></a>
+                                                            </div>
+                                                          </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                      </tbody>
+                                                    </table>
+                                                  </div>
+                                                </div>
+                                              
+                                              </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="custom-tabs-three-predeploy-messages" role="tabpanel" aria-labelledby="custom-tabs-three-messages-tab">
+                                              <div class="card">
+                                                <div class="card-header">
+                                                  <div class="card-tools">
+                                                    <div class="btn-group btn-group-sm">
+                                                      <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#con_image_create_import"><i class="fas fa-plus"></i></a>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="card-body">
+                                                  <div class="table-responsive">
+                                                    <table class="table m-0">
+                                                      <thead>
+                                                      <tr>
+                                                        <th >Project Name</th>
+                                                        <th >Application Name</th>
+                                                        <th class="text-center">Action</th>
+                                                      </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        {% for app in data["containers"] %}
+                                                        <tr>
+                                                          {% for key, value in app.items() %}
+                                                          <td >{{key}}</td>
+                                                          <td >{{value}}</td>
+                                                          <td class="text-center py-0 align-middle">
+                                                            <div class="btn-group btn-group-sm">
+                                                              <a href="/devsecops?delete_app={{key}}&app={{value}}" class="btn btn-default"><i class="fas fa-trash"></i></a>
+                                                            </div>
+                                                          </td>
+                                                          {% endfor %}
+                                                        </tr>
+                                                        {% endfor %}
+                                                      </tbody>
+                                                    </table>
+                                                  </div>
+                                                </div>
+                                              
+                                              </div>
+                                            </div>
+                                  
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                <!-- /.card -->
+                                  </div>
+                        
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>               
+                    </div>
+                    
+                      <!-- /.col -->
+                  </div>
+                  <div class="tab-pane" id="dynamicscan">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-code-branch"></i> &nbsp;Create DAST Scans</h3>
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body">
+                            <ul class="nav nav-pills flex-column">
+                              <li class="nav-item ">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#dast_basic_scan">
+                                  <i class="fas fa-bug"></i> &nbsp;&nbsp;DAST Basic 
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#dast_selenium">
+                                  <i class="fas fa-spider"></i> &nbsp;&nbsp;DAST Extended (Using Selenium Scripts)
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-cog mr-1"></i> &nbsp;DAST Configuration</h3>
+                            
+                          </div>
+                          <div class="card-body">
+                            <div class="card card-secondary card-tabs">
+                              <div class="card-header p-0 pt-1 border-bottom-0">
+                                <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                                  <li class="nav-item">
+                                    <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-dast-script" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">Script Configuration</a>
+                                  </li>
+                                  
+                                  
+                                </ul>
+                              </div>
+                              <div class="card-body">
+                                  <div class="tab-content" id="custom-tabs-three-tabContent">
+                                    <div class="tab-pane fade show active" id="custom-tabs-three-dast-script" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                                        <div class="card  card-tabs">
+                                        <div class="card-header p-0 pt-1 border-bottom-0">
+                                          <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                                            <li class="nav-item">
+                                              <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-dast-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">Setup Source</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" href="#custom-tabs-three-dast-profile" role="tab" aria-controls="custom-tabs-three-profile" aria-selected="false">Create Project</a>
+                                            </li>
+                                            <li class="nav-item">
+                                              <a class="nav-link" id="custom-tabs-three-messages-tab" data-toggle="pill" href="#custom-tabs-three-dast-messages" role="tab" aria-controls="custom-tabs-three-messages" aria-selected="false">Upload Selenium Script</a>
+                                            </li>
+                                          </ul>
+                                        </div>
+                                        <div class="card-body">
+                                          <div class="tab-content" id="custom-tabs-three-tabContent">
+                                            <div class="tab-pane fade show active" id="custom-tabs-three-dast-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                                              <div class="card">
+                                                <div class="card-header">
+                                                  <div class="card-tools">
+                                                    <div class="btn-group btn-group-sm">
+                                                      <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#pre_build"><i class="fas fa-plus"></i></a>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="card-body">
+                                                  <div class="table-responsive">
+                                                    <table class="table m-0">
+                                                      <thead>
+                                                      <tr>
+                                                        <th>Created</th>
+                                                        <th class="text-center">Source</th>
+                                                        <th class="text-center">Name</th>
+                                                        <th class="text-center">Action</th>
+                                                      </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        {% for prebuild in data["prebuild"] %}
+                                                        <tr>
+                                                        
+                                                          <td >{{prebuild.time}}</td>
+                                                          {% if "aws"==prebuild.source %}
+                                                          <td class="text-center"><i class="fab fa-aws mr-1"></i></td>
+                                                          {% endif %}
+                                                          {% if "git"==prebuild.source %}
+                                                          <td class="text-center"><i class="fab fa-github mr-1"></i></td>
+                                                          {% endif %}
+                                                          {% if "gitlab"==prebuild.source %}
+                                                          <td class="text-center"><i class="fab fa-gitlab mr-1"></i></td>
+                                                          {% endif %}
+                                                          <td class="text-center">{{prebuild.source_name}}</td>
+                                                          <td class="text-center py-0 align-middle">
+                                                            <div class="btn-group btn-group-sm">
+                                                              <a href="/devsecops?delete_conf={{prebuild.ID}}" class="btn btn-default"><i class="fas fa-trash"></i></a>
+                                                            </div>
+                                                            
+                                                          </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                      </tbody>
+                                                    </table>
+                                                  </div>
+                                                </div>
+                                              
+                                              </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="custom-tabs-three-dast-profile" role="tabpanel" aria-labelledby="custom-tabs-three-profile-tab">
+                                              <div class="card">
+                                                <div class="card-header">
+                                                  <div class="card-tools">
+                                                    <div class="btn-group btn-group-sm">
+                                                      <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#project_create"><i class="fas fa-plus"></i></a>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="card-body">
+                                                  <div class="table-responsive">
+                                                    <table class="table m-0">
+                                                      <thead>
+                                                      <tr>
+                                                        <th >Project Name</th>
+                                                        <th class="text-center">Action</th>
+                                                      </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        {% for project in data["projects"] %}
+                                                        <tr>
+                                                          <td >{{project}}</td>
+                                                          <td class="text-center py-0 align-middle">
+                                                            <div class="btn-group btn-group-sm">
+                                                              <a href="/devsecops?delete_project={{project}}" class="btn btn-default"><i class="fas fa-trash"></i></a>
+                                                            </div>
+                                                          </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                      </tbody>
+                                                    </table>
+                                                  </div>
+                                                </div>
+                                              
+                                              </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="custom-tabs-three-dast-messages" role="tabpanel" aria-labelledby="custom-tabs-three-messages-tab">
+                                              <div class="card">
+                                                <div class="card-header">
+                                                  <div class="card-tools">
+                                                    <div class="btn-group btn-group-sm">
+                                                      <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#sel_create_import"><i class="fas fa-plus"></i></a>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="card-body">
+                                                  <div class="table-responsive">
+                                                    <table class="table m-0">
+                                                      <thead>
+                                                      <tr>
+                                                        <th >Project Name</th>
+                                                        <th >Scripts Name</th>
+                                                        <th class="text-center">Action</th>
+                                                      </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        {% for app in data["apps"] %}
+                                                        <tr>
+                                                          {% for key, value in app.items() %}
+                                                          <td >{{key}}</td>
+                                                          <td >{{value}}</td>
+                                                          <td class="text-center py-0 align-middle">
+                                                            <div class="btn-group btn-group-sm">
+                                                              <a href="/devsecops?delete_app={{key}}&app={{value}}" class="btn btn-default"><i class="fas fa-trash"></i></a>
+                                                            </div>
+                                                          </td>
+                                                          {% endfor %}
+                                                        </tr>
+                                                        {% endfor %}
+                                                      </tbody>
+                                                    </table>
+                                                  </div>
+                                                </div>
+                                              
+                                              </div>
+                                            </div>
+                                  
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="tab-pane fade " id="custom-tabs-three-dast-targets" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                                <!-- /.card -->
+                              </div>
+                                  </div>
+                        
+                                </div>
+                              </div>
+                            </div>
+                            
+                          </div>
+                        </div>               
+                      </div>
+                      
+                      <!-- /.col -->
+                  </div>
+                  <div class="tab-pane" id="cloudscan">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-code-branch"></i> &nbsp;Create Cloud Scans</h3>
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body">
+                            <ul class="nav nav-pills flex-column">
+                              <li class="nav-item ">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#cloud_sec_scan">
+                                  <i class="fas fa-cloud"></i> &nbsp;&nbsp; Cloud Security Audit 
+                                </a>
+                              </li>
+                             
+                            </ul>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-cog mr-1"></i> &nbsp;Cloud Configuration</h3>
+                            
+                          </div>
+                          <div class="card-body">
+                            <div class="card card-primary card-outline card-tabs">
+                              <div class="card-header p-0 pt-1 border-bottom-0">
+                                <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                                  <li class="nav-item">
+                                    <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-source" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">Setup Source</a>
+                                  </li>
+                                </ul>
+                              </div>
+                              <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-three-tabContent">
+                                  <div class="tab-pane fade show active" id="custom-tabs-three-source" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                                    <div class="card">
+                                      <div class="card-header">
+                                        <div class="card-tools">
+                                          <div class="btn-group btn-group-sm">
+                                            <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#pre_build"><i class="fas fa-plus"></i></a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="card-body">
+                                        <div class="table-responsive">
+                                          <table class="table m-0">
+                                            <thead>
+                                            <tr>
+                                              <th>Created</th>
+                                              <th class="text-center">Source</th>
+                                              <th class="text-center">Name</th>
+                                              <th class="text-center">Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for prebuild in data["prebuild"] %}
+                                              <tr>
+                                              
+                                                <td >{{prebuild.time}}</td>
+                                                {% if "aws"==prebuild.source %}
+                                                <td class="text-center"><i class="fab fa-aws mr-1"></i></td>
+                                                {% endif %}
+                                                {% if "git"==prebuild.source %}
+                                                <td class="text-center"><i class="fab fa-github mr-1"></i></td>
+                                                {% endif %}
+                                                {% if "gitlab"==prebuild.source %}
+                                                <td class="text-center"><i class="fab fa-gitlab mr-1"></i></td>
+                                                {% endif %}
+                                                <td class="text-center">{{prebuild.source_name}}</td>
+                                                <td class="text-center py-0 align-middle">
+                                                  <div class="btn-group btn-group-sm">
+                                                    <a href="/devsecops?delete_conf={{prebuild.ID}}" class="btn btn-default"><i class="fas fa-trash"></i></a>
+                                                  </div>
+                                                  
+                                                </td>
+                                              </tr>
+                                              {% endfor %}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                     
+                                    </div>
+                                  </div>
+                        
+                                </div>
+                              </div>
+                              <!-- /.card -->
+                            </div>
+                            
+                            
+                          </div>
+                        </div>               
+                      </div>
+                      
+                      <!-- /.col -->
+                    </div>
+                  </div>
+                  </div>
+                  <!-- /.tab-pane -->
+                </div>
+                <!-- /.tab-content -->
+              </div><!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+     
+  <div class="modal fade" id="pre_build">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Source Setup</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="card">
+                <div class="card-header p-3">
+                  <ul class="nav nav-pills">
+                    <li class="nav-item"><a class="nav-link active" href="#aws" data-toggle="tab">AWS S3</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#git" data-toggle="tab">Git</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#gitlab" data-toggle="tab">Gitlab</a></li>
+                  </ul>
+                </div><!-- /.card-header -->
+                <div class="card-body">
+                  <div class="tab-content">
+                    <div class="active tab-pane" id="aws">
+                      <form method="post" action="/devsecops">
+                        <div class="form-group">
+                          <input type="hidden" name="type" value="aws_prebuild_conf" class="form-control">
+                        </div>
+                        <div class="form-group">
+                          <label for="sourceName">Source Name</label>
+                          <input type="text" name="confName" class="form-control">
+                        </div>
+    
+                        <div class="form-group">
+                          <label for="bucketName">Bucket Name</label>
+                          <input type="text" name="bucketName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                          <label for="bucketRegion">Bucket Region</label>
+                          <input type="text" name="bucketRegion" class="form-control">
+                        </div>
+                        <div class="form-group">
+                          <label for="AccessKey">Access Key</label>
+                          <input type="text" name="AccessKey" class="form-control">
+                        </div>
+                        <div class="form-group">
+                          <label for="SecAccessKey">Secret Access Key</label>
+                          <input type="text" name="SecAccessKey" class="form-control">
+                        </div>
+                        
+                      <!-- /.card-body -->
+                      <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                      </div>
+                      </form>
+                    </div>
+                    <!-- /.tab-pane -->
+                    <div class="tab-pane" id="git">
+                      <form method="post" action="/devsecops">
+                        <div class="form-group">
+                          <input type="hidden" name="type" value="git_prebuild_conf" class="form-control">
+                        </div>
+                        <div class="form-group">
+                          <label for="sourceName">Source Name</label>
+                          <input type="text" name="confName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                          <label for="gittoken">Git Auth Token</label>
+                          <input type="text" name="gittoken" class="form-control">
+                        </div>
+                        
+                      <!-- /.card-body -->
+                      <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                      </div>
+                      </form>
+                    </div>
+                    <div class="tab-pane" id="gitlab">
+                      <form method="post" action="/devsecops">
+                        <div class="form-group">
+                          <input type="hidden" name="type" value="gitlab_prebuild_conf" class="form-control">
+                        </div>
+                        <div class="form-group">
+                          <label for="sourceName">Source Name</label>
+                          <input type="text" name="confName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                          <label for="gittoken">Gitlab Auth Token</label>
+                          <input type="text" name="gittoken" class="form-control">
+                        </div>
+                        
+                      <!-- /.card-body -->
+                      <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                      </div>
+                      </form>
+                    </div>
+                    <!-- /.tab-pane -->
+                  </div>
+                  <!-- /.tab-content -->
+                </div><!-- /.card-body -->
+              </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+    </div>
+      <!-- /.modal-dialog -->
+  </div>
+  <div class="modal fade" id="project_create">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Project Create</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="card">
+              <div class="card-body">
+                <form method="post" action="/devsecops">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="project_create" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="projectName">Project Name</label>
+                    <input type="text" name="projectName" class="form-control">
+                  </div>
+                  
+                <!-- /.card-body -->
+                <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Create Project</button>
+                </div>
+                </form>
+                <!-- /.tab-content -->
+              </div><!-- /.card-body -->
+            </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+  </div>
+    <!-- /.modal-dialog -->
+  </div>
+ 
+  <div class="modal fade" id="app_create_import">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Upload Application</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="card">
+              <div class="card-header p-3">
+                <ul class="nav nav-pills">
+                  <li class="nav-item"><a class="nav-link active" href="#awsimport1" data-toggle="tab">AWS S3 Import</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#gitimport1" data-toggle="tab">Git Import</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#gitlabimport1" data-toggle="tab">GitLab Import</a></li>
+                </ul>
+              </div><!-- /.card-header -->
+
+              <div class="card-body">
+                <div class="tab-content">
+                  <div class="active tab-pane" id="awsimport1">
+                    <form method="post" action="/devsecops">
+                      <div class="form-group">
+                        <input type="hidden" name="type" value="prebuild_app_aws_import_from_source" class="form-control">
+                      </div>
+                      <div class="form-group">
+                          <label for="projectName">Project</label>
+                          <select name="projectName" class="form-control custom-select">
+                            {% for project in data["projects"] %}
+                            <option value={{project}}>
+                              {{project}}
+                            </option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="source">Select Source</label>
+                          <select name="source" class="form-control custom-select">
+                            {% for prebuild in data["prebuild"] %}
+                            {% if "aws"==prebuild.source %}                                                    
+                              <option value={{prebuild.ID}}>
+                              {{prebuild.source_name}}
+                            </option>
+                            {% endif %}
+                            {% endfor %}
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="s3folder">Application Path in S3</label>
+                          <input type="text" name="s3folder" placeholder="ex: application/" class="form-control">
+                        </div>
+                      
+                    <!-- /.card-body -->
+                    <div class="modal-footer justify-content-between">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Create Application</button>
+                    </div>
+                    </form>
+                  </div>
+                  <div class="tab-pane" id="gitimport1">
+                    <form method="post" action="/devsecops">
+                      <div class="form-group">
+                        <input type="hidden" name="type" value="prebuild_app_git_import" class="form-control">
+                      </div>
+                      <div class="form-group">
+                          <label for="projectName">Project</label>
+                          <select name="projectName" class="form-control custom-select">
+                            {% for project in data["projects"] %}
+                            <option value={{project}}>
+                              {{project}}
+                            </option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="source">Select Source</label>
+                          <select name="source" class="form-control custom-select">
+                            {% for prebuild in data["prebuild"] %}
+                            {% if "git"==prebuild.source %}                                                    
+                              <option value={{prebuild.ID}}>
+                              {{prebuild.source_name}}
+                            </option>
+                            {% endif %}
+                            {% endfor %}
+                          </select>
+                          
+                        </div>
+                        <div class="form-group">
+                          <label for="repolink">Repo Link</label>
+                          <input type="text" name="repolink" class="form-control">
+                        </div>
+                    <!-- /.card-body -->
+                    <div class="modal-footer justify-content-between">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Create Application</button>
+                    </div>
+                    </form>
+                  </div>
+                  <div class="tab-pane" id="gitlabimport1">
+                    <form method="post" action="/devsecops">
+                      <div class="form-group">
+                        <input type="hidden" name="type" value="prebuild_app_gitlab_import" class="form-control">
+                      </div>
+                      <div class="form-group">
+                          <label for="projectName">Project</label>
+                          <select name="projectName" class="form-control custom-select">
+                            {% for project in data["projects"] %}
+                            <option value={{project}}>
+                              {{project}}
+                            </option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="source">Select Source</label>
+                          <select name="source" class="form-control custom-select">
+                            {% for prebuild in data["prebuild"] %}
+                            {% if "gitlab"==prebuild.source %}                                                    
+                              <option value={{prebuild.ID}}>
+                              {{prebuild.source_name}}
+                            </option>
+                            {% endif %}
+                            {% endfor %}
+                          </select>
+                          
+                        </div>
+                        <div class="form-group">
+                          <label for="repolink">Repo Link</label>
+                          <input type="text" name="repolink" class="form-control">
+                        </div>
+                    <!-- /.card-body -->
+                    <div class="modal-footer justify-content-between">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Create Application</button>
+                    </div>
+                    </form>
+                  </div>
+                </div>
+                
+                <!-- /.tab-content -->
+              </div><!-- /.card-body -->
+            </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+  </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <div class="modal fade" id="sel_create_import">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Upload Selenium Script</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-header p-3">
+              <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link active" href="#awsimport3" data-toggle="tab">AWS S3 Import</a></li>
+                <li class="nav-item"><a class="nav-link" href="#gitimport3" data-toggle="tab">Git Import</a></li>
+                <li class="nav-item"><a class="nav-link" href="#gitlabimport3" data-toggle="tab">GitLab Import</a></li>
+              </ul>
+            </div><!-- /.card-header -->
+
+            <div class="card-body">
+              <div class="tab-content">
+                <div class="active tab-pane" id="awsimport3">
+                  <form method="post" action="/devsecops">
+                    <div class="form-group">
+                      <input type="hidden" name="type" value="prebuild_app_aws_import_from_source" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="projectName">Project</label>
+                        <select name="projectName" class="form-control custom-select">
+                          {% for project in data["projects"] %}
+                          <option value={{project}}>
+                            {{project}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="source">Select Source</label>
+                        <select name="source" class="form-control custom-select">
+                          {% for prebuild in data["prebuild"] %}
+                          {% if "aws"==prebuild.source %}                                                    
+                            <option value={{prebuild.ID}}>
+                            {{prebuild.source_name}}
+                          </option>
+                          {% endif %}
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="s3folder">Selenium Script Path in S3</label>
+                        <input type="text" name="s3folder" placeholder="ex: application/" class="form-control">
+                      </div>
+                    
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Import Selenium Script</button>
+                  </div>
+                  </form>
+                </div>
+                <div class="tab-pane" id="gitimport3">
+                  <form method="post" action="/devsecops">
+                    <div class="form-group">
+                      <input type="hidden" name="type" value="prebuild_app_git_import" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="projectName">Project</label>
+                        <select name="projectName" class="form-control custom-select">
+                          {% for project in data["projects"] %}
+                          <option value={{project}}>
+                            {{project}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="source">Select Source</label>
+                        <select name="source" class="form-control custom-select">
+                          {% for prebuild in data["prebuild"] %}
+                          {% if "git"==prebuild.source %}                                                    
+                            <option value={{prebuild.ID}}>
+                            {{prebuild.source_name}}
+                          </option>
+                          {% endif %}
+                          {% endfor %}
+                        </select>
+                        
+                      </div>
+                      <div class="form-group">
+                        <label for="repolink">Repo Link</label>
+                        <input type="text" name="repolink" class="form-control">
+                      </div>
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Import Selenium Script</button>
+                  </div>
+                  </form>
+                </div>
+                <div class="tab-pane" id="gitlabimport3">
+                  <form method="post" action="/devsecops">
+                    <div class="form-group">
+                      <input type="hidden" name="type" value="prebuild_app_gitlab_import" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="projectName">Project</label>
+                        <select name="projectName" class="form-control custom-select">
+                          {% for project in data["projects"] %}
+                          <option value={{project}}>
+                            {{project}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="source">Select Source</label>
+                        <select name="source" class="form-control custom-select">
+                          {% for prebuild in data["prebuild"] %}
+                          {% if "gitlab"==prebuild.source %}                                                    
+                            <option value={{prebuild.ID}}>
+                            {{prebuild.source_name}}
+                          </option>
+                          {% endif %}
+                          {% endfor %}
+                        </select>
+                        
+                      </div>
+                      <div class="form-group">
+                        <label for="repolink">Repo Link</label>
+                        <input type="text" name="repolink" class="form-control">
+                      </div>
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create Application</button>
+                  </div>
+                  </form>
+                </div>
+              </div>
+              
+              <!-- /.tab-content -->
+            </div><!-- /.card-body -->
+          </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+</div>
+  <!-- /.modal-dialog -->
+</div>
+  <div class="modal fade" id="con_image_create_import">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Import Container Image</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-header p-3">
+              <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link active" href="#awsimport2" data-toggle="tab">AWS S3 Import</a></li>
+              </ul>
+            </div><!-- /.card-header -->
+
+            <div class="card-body">
+              <div class="tab-content">
+                <div class="active tab-pane" id="awsimport2">
+                  <form method="post" action="/devsecops">
+                    <div class="form-group">
+                      <input type="hidden" name="type" value="prebuild_app_aws_import_from_source" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="projectName">Project</label>
+                        <select name="projectName" class="form-control custom-select">
+                          {% for project in data["projects"] %}
+                          <option value={{project}}>
+                            {{project}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="source">Select Source</label>
+                        <select name="source" class="form-control custom-select">
+                          {% for prebuild in data["prebuild"] %}
+                          {% if "aws"==prebuild.source %}                                                    
+                            <option value={{prebuild.ID}}>
+                            {{prebuild.source_name}}
+                          </option>
+                          {% endif %}
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="s3folder">Exported Image path in S3</label>
+                        <input type="text" name="s3folder" placeholder="ex: mysql.tar" class="form-control">
+                      </div>
+                    
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create Application</button>
+                  </div>
+                  </form>
+                </div>
+                
+              </div>
+              
+              <!-- /.tab-content -->
+            </div><!-- /.card-body -->
+          </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+</div>
+  <!-- /.modal-dialog -->
+</div>
+  <div class="modal fade" id="sec_scan">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Secrets Checks Scan</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-header p-3">
+              <ul class="nav nav-pills">
+                <!--<li class="nav-item"><a class="nav-link active" href="#local" data-toggle="tab"></a></li>
+                <li class="nav-item"><a class="nav-link" href="#aws_prebuild" data-toggle="tab">AWS S3</a></li>
+                <li class="nav-item"><a class="nav-link" href="#git_prebuild" data-toggle="tab">Git</a></li>-->
+              </ul>
+            </div><!-- /.card-header -->
+            <div class="card-body">
+              <div class="tab-content">
+                <!--<div class="active tab-pane" id="local">-->
+                  <form method="post" action="/devsecops">
+                    <div class="form-group">
+                      <input type="hidden" name="type" value="pre_build_scan" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <input type="hidden" name="pre_build_scan_category" value="secret_check_local" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label for="scanname">Scan Name</label>
+                      <input type="text" name="scanname" class="form-control">
+                    </div>
+    
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="projectname">Select Project</label>
+                          
+                          <select name="projectname" id="Cup" class="form-control custom-select">
+                            <option selected></option>
+                            {% for scan in data["projects"] %}
+                            <option value={{scan}}>
+                              {{scan}}
+                            </option>
+                            {% endfor %}
+                          </select>
+                          
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="appname" >Select Application</label>
+                          <select name="appname" appname id="Drink" class="form-control custom-select">
+                            <option selected>Please Select Project First
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="tool">Select Tool</label>
+                          <select name="tool" class="form-control custom-select">
+                            <option selected></option>
+                            <option >whisper</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <br><br>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="delete_check">
+                            <label class="form-check-label">Remove Application From Engine</label>
+                          </div>
+                        </div>
+                        
+                      </div>
+                    </div>
+
+                    <!-- /.card-body -->
+                    <div class="modal-footer justify-content-between">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </form>
+                <!--</div>-->
+                <div class="tab-pane" id="aws_prebuild">
+                  <form method="post" action="/devsecops">
+                    <div class="form-group">
+                      <input type="hidden" name="type" value="pre_build_scan" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <input type="hidden" name="pre_build_scan_category" value="secret_check" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label for="scanname">Scan Name</label>
+                      <input type="text" name="scanname" class="form-control">
+                    </div>
+    
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="projectname">Select Project</label>
+                          
+                          <select name="projectname" id="Cup" class="form-control custom-select">
+                            <option selected></option>
+                            {% for scan in data["projects"] %}
+                            <option value={{scan}}>
+                              {{scan}}
+                            </option>
+                            {% endfor %}
+                          </select>
+                          
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="appname" >Select Application</label>
+                          <select name="appname" appname id="Drink" class="form-control custom-select">
+                            <option selected>Please Select Project First
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="tool">Select Tool</label>
+                          <select id="tool" class="form-control custom-select">
+                            <option selected></option>
+                            <option>Gitleaks</option>
+                            <option >whisper</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="modal-footer justify-content-between">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </form>
+                </div>
+                <div class="tab-pane" id="git_prebuild">
+                  <form method="post" action="/devsecops">
+                    <div class="form-group">
+                      <input type="hidden" name="type" value="pre_build_scan" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <input type="hidden" name="pre_build_scan_category" value="secret_check" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label for="scanname">Scan Name</label>
+                      <input type="text" name="scanname" class="form-control">
+                    </div>
+    
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="projectname">Select Project</label>
+                          
+                          <select name="projectname" id="Cup" class="form-control custom-select">
+                            <option selected></option>
+                            {% for scan in data["projects"] %}
+                            <option value={{scan}}>
+                              {{scan}}
+                            </option>
+                            {% endfor %}
+                          </select>
+                          
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="appname" >Select Application</label>
+                          <select name="appname" appname id="Drink" class="form-control custom-select">
+                            <option selected>Please Select Project First
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="tool">Select Tool</label>
+                          <select id="tool" class="form-control custom-select">
+                            <option selected></option>
+                            <option>Gitleaks</option>
+                            <option >whisper</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                   
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+                </div>
+              </div>
+
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+  <div class="modal fade" id="sca_scan">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">SCA Scan</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/devsecops">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="pre_build_scan" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <input type="hidden" name="pre_build_scan_category" value="sca_local" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="scanname">Scan Name</label>
+                    <input type="text" name="scanname" class="form-control">
+                  </div>
+  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="projectname">Select Project</label>
+                        
+                        <select name="projectname" id="sca_scan_func" class="form-control custom-select">
+                          <option selected></option>
+                          {% for scan in data["projects"] %}
+                          <option value={{scan}}>
+                            {{scan}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                        
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="appname" >Select Application</label>
+                        <select name="appname" appname id="sca_app" class="form-control custom-select">
+                          <option selected>Please Select Project First
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="tool">Select Tool</label>
+                        <select name="tool" class="form-control custom-select">
+                          <option selected></option>
+                          <option>snyk</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <br><br>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="delete_check">
+                          <label class="form-check-label">Remove Application From Engine</label>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+  <div class="modal fade" id="sast_model_scan">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">SAST Scan</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/devsecops">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="pre_build_scan" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <input type="hidden" name="pre_build_scan_category" value="sast_local" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="scanname">Scan Name</label>
+                    <input type="text" name="scanname" class="form-control">
+                  </div>
+  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="projectname">Select Project</label>
+                        
+                        <select name="projectname" id="sast_scan_func" class="form-control custom-select">
+                          <option selected></option>
+                          {% for scan in data["projects"] %}
+                          <option value={{scan}}>
+                            {{scan}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                        
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="appname" >Select Application</label>
+                        <select name="appname" appname id="sast_app" class="form-control custom-select">
+                          <option selected>Please Select Project First
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="tool">Select Tool</label>
+                        <select name="tool" class="form-control custom-select">
+                          <option selected></option>
+                          <option>snyk</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <br><br>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="delete_check">
+                          <label class="form-check-label">Remove Application From Engine</label>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+  <div class="modal fade" id="iac_model_scan">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">IaC Scan</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/devsecops">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="pre_build_scan" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <input type="hidden" name="pre_build_scan_category" value="iac_local" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="scanname">Scan Name</label>
+                    <input type="text" name="scanname" class="form-control">
+                  </div>
+  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="projectname">Select Project</label>
+                        
+                        <select name="projectname" id="iac_scan_func" class="form-control custom-select">
+                          <option selected></option>
+                          {% for scan in data["projects"] %}
+                          <option value={{scan}}>
+                            {{scan}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                        
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="appname" >Select Application</label>
+                        <select name="appname" appname id="iac_app" class="form-control custom-select">
+                          <option selected>Please Select Project First
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="tool">Select Tool</label>
+                        <select name="tool" class="form-control custom-select">
+                          <option selected></option>
+                          <option>snyk</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <br><br>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="delete_check">
+                          <label class="form-check-label">Remove Application From Engine</label>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+  <div class="modal fade" id="dast_basic_scan">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">DAST Basic Scan</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/devsecops">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="dast_basic_scan" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <input type="hidden" name="dast_scan_category" value="dast_basic" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="scanname">Scan Name</label>
+                    <input type="text" name="scanname" class="form-control">
+                  </div>
+  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="projectname">Select Project</label>
+                        
+                        <select name="projectname" class="form-control custom-select">
+                          <option selected></option>
+                          {% for scan in data["projects"] %}
+                          <option value={{scan}}>
+                            {{scan}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                        
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="appname" >URL</label>
+                        <input type="text" name="appname" class="form-control">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="tool">Select Tool</label>
+                        <select name="tool" class="form-control custom-select">
+                          <option selected></option>
+                          <option>Nikto</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+  <div class="modal fade" id="dast_selenium">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">DAST Selenium Scan</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/devsecops">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="dast_selenium_scan" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <input type="hidden" name="selenium_scan_category" value="selenium_local" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="scanname">Scan Name</label>
+                    <input type="text" name="scanname" class="form-control">
+                  </div>
+  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="projectname">Select Project</label>
+                        
+                        <select name="projectname" id="selenium_scan_func" class="form-control custom-select">
+                          <option selected></option>
+                          {% for scan in data["projects"] %}
+                          <option value={{scan}}>
+                            {{scan}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                        
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="appname" >Select Application</label>
+                        <select name="appname" appname id="selenium_app" class="form-control custom-select">
+                          <option selected>Please Select Project First
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="tool">Select Tool</label>
+                        <select name="tool" class="form-control custom-select">
+                          <option selected></option>
+                          <option>ZAP Proxy</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <br><br>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="delete_check">
+                          <label class="form-check-label">Remove Application From Engine</label>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+  <div class="modal fade" id="public_image_scan">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Public Container Vulnerability Scan</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/devsecops">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="pre_deployment_scan" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <input type="hidden" name="pre_deployment_scan_category" value="public_container_vuln_scan" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="scanname">Scan Name</label>
+                    <input type="text" name="scanname" class="form-control">
+                  </div>
+  
+                  <div class="form-group">
+                    <label for="imgname">Image Name With Tag</label>
+                    <input type="text" name="imgname"  placeholder="ex: python:3.4-alpine" class="form-control">
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="tool">Select Tool</label>
+                        <select name="tool" class="form-control custom-select">
+                          <option selected></option>
+                          <option>Trivy</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+  <div class="modal fade" id="custom_image_scan">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Custom Container Vulnerability Scan</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/devsecops">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="pre_deployment_scan" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <input type="hidden" name="pre_deployment_scan_category" value="custom_container_vuln_scan" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="scanname">Scan Name</label>
+                    <input type="text" name="scanname" class="form-control">
+                  </div>
+  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="projectname">Select Project</label>
+                        
+                        <select name="projectname" id="custom_img_scan_func" class="form-control custom-select">
+                          <option selected></option>
+                          {% for scan in data["projects"] %}
+                          <option value={{scan}}>
+                            {{scan}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                        
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="appname" >Select Application</label>
+                        <select name="appname" appname id="cus_img_app" class="form-control custom-select">
+                          <option selected>Please Select Project First
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="tool">Select Tool</label>
+                        <select name="tool" class="form-control custom-select">
+                          <option selected></option>
+                          <option>Trivy</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+  <div class="modal fade" id="repo_image_scan">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Repository Container Vulnerability Scan</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/devsecops">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="pre_deployment_scan" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <input type="hidden" name="pre_deployment_scan_category" value="repository_container_vuln_scan" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="scanname">Scan Name</label>
+                    <input type="text" name="scanname" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="source">Select Source</label>
+                    <select name="source" class="form-control custom-select">
+                      {% for prebuild in data["prebuild"] %}
+                      {% if "git"==prebuild.source %}                                                    
+                        <option value={{prebuild.ID}}>
+                        {{prebuild.source_name}}
+                      </option>
+                      {% endif %}
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="repolink">Repo Link</label>
+                    <input type="text" name="repolink" class="form-control">
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="tool">Select Tool</label>
+                        <select name="tool" class="form-control custom-select">
+                          <option selected></option>
+                          <option>Trivy</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+  <div class="modal fade" id="cloud_sec_scan">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Cloud Security Audit</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <div class="tab-content">
+                <!--<div class="active tab-pane" id="local">-->
+                  <form method="post" action="/devsecops">
+                    <div class="form-group">
+                      <input type="hidden" name="type" value="cloud_sec_audit_scan" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <input type="hidden" name="cloud_scan_category" value="cloud_sec_audit_category" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label for="scanname">Scan Name</label>
+                      <input type="text" name="scanname" class="form-control">
+                    </div>
+                    <div class="row">
+                      <div class="form-group">
+                        <label for="source">Select Source</label>
+                        <select name="source" class="form-control custom-select">
+                          {% for prebuild in data["prebuild"] %}
+                          {% if "aws"==prebuild.source %}                                                    
+                            <option value={{prebuild.ID}}>
+                            {{prebuild.source_name}}
+                          </option>
+                          {% endif %}
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="tool">Select Tool</label>
+                          <select name="tool" class="form-control custom-select">
+                            <option selected></option>
+                            <option >ScoutSuite</option>
+                          </select>
+                        </div>
+                      </div>
+                     
+                    </div>
+
+                    <!-- /.card-body -->
+                    <div class="modal-footer justify-content-between">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </form>
+                <!--</div>-->
+              </div>
+
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- jQuery -->
+  <script src="/static/assets/plugins/jquery/jquery.min.js"></script>
+  <!-- Bootstrap 4 -->
+  <script src="/static/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- DataTables -->
+  <script src="/static/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+  <script src="/static/assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="/static/assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="/static/assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+  <!-- AdminLTE App -->
+  <script src="/static/assets/js/adminlte.min.js"></script>
+  <!-- AdminLTE for demo purposes -->
+  <script src="/static/assets/js/demo.js"></script>
+  <!-- page script -->
+  <script>
+    $(function () {
+      $("#example1").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+      });
+      $('#example2').DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+    });
+  </script>
+
+  <script>
+    var cups = JSON.parse('{{data["project_folders"] | tojson}}');
+cup = document.getElementById("Cup");
+//add an event listener
+cup.addEventListener("change", function() {
+  //get the selection box for drinks
+  drink = document.getElementById("Drink")
+  //set its innerHTML to be nothing
+  drink.innerHTML = "";
+  //if the value from the cups selection box is not nocup (no cup selected)
+  if (cup.value != "nocup")
+  {
+    //loop over the different drinks
+    for(var i = 0; i < cups[cup.value].length; i++)
+    {
+      //and add them to the drink options drop down
+      drink.innerHTML += "<option>" + cups[cup.value][i] + "</option>";
+    }
+  }
+  //otherwise, if the cups selection box is "nocup" (no cup is actually selected)
+  else
+  {
+    //set the drinks selection box back to "No cup selected"
+    drink.innerHTML = "<option>No cup selected</option>"
+  }
+
+});
+  </script>
+
+<script>
+  var sca_cups = JSON.parse('{{data["project_folders"] | tojson}}');
+sca_cup = document.getElementById("sca_scan_func");
+//add an event listener
+sca_cup.addEventListener("change", function() {
+//get the selection box for drinks
+sca_app = document.getElementById("sca_app")
+//set its innerHTML to be nothing
+sca_app.innerHTML = "";
+//if the value from the cups selection box is not nocup (no cup selected)
+if (sca_cup.value != "nocup")
+{
+  //loop over the different drinks
+  for(var i = 0; i < sca_cups[sca_cup.value].length; i++)
+  {
+    //and add them to the drink options drop down
+    sca_app.innerHTML += "<option>" + sca_cups[sca_cup.value][i] + "</option>";
+  }
+}
+//otherwise, if the cups selection box is "nocup" (no cup is actually selected)
+else
+{
+  //set the drinks selection box back to "No cup selected"
+  sca_app.innerHTML = "<option>No cup selected</option>"
+}
+
+});
+</script>
+
+<script>
+  var sast_cups = JSON.parse('{{data["project_folders"] | tojson}}');
+  sastcup = document.getElementById("sast_scan_func");
+//add an event listener
+sastcup.addEventListener("change", function() {
+//get the selection box for drinks
+sast_app = document.getElementById("sast_app")
+//set its innerHTML to be nothing
+sast_app.innerHTML = "";
+//if the value from the cups selection box is not nocup (no cup selected)
+if (sastcup.value != "nocup")
+{
+  //loop over the different drinks
+  for(var i = 0; i < sast_cups[sastcup.value].length; i++)
+  {
+    //and add them to the drink options drop down
+    sast_app.innerHTML += "<option>" + sast_cups[sastcup.value][i] + "</option>";
+  }
+}
+//otherwise, if the cups selection box is "nocup" (no cup is actually selected)
+else
+{
+  //set the drinks selection box back to "No cup selected"
+  sast_app.innerHTML = "<option>No cup selected</option>"
+}
+
+});
+</script>
+
+<script>
+  var iac_cups = JSON.parse('{{data["project_folders"] | tojson}}');
+  iaccup = document.getElementById("iac_scan_func");
+//add an event listener
+iaccup.addEventListener("change", function() {
+//get the selection box for drinks
+iac_app = document.getElementById("iac_app")
+//set its innerHTML to be nothing
+iac_app.innerHTML = "";
+//if the value from the cups selection box is not nocup (no cup selected)
+if (iaccup.value != "nocup")
+{
+  //loop over the different drinks
+  for(var i = 0; i < iac_cups[iaccup.value].length; i++)
+  {
+    //and add them to the drink options drop down
+    iac_app.innerHTML += "<option>" + iac_cups[iaccup.value][i] + "</option>";
+  }
+}
+//otherwise, if the cups selection box is "nocup" (no cup is actually selected)
+else
+{
+  //set the drinks selection box back to "No cup selected"
+  iac_app.innerHTML = "<option>No cup selected</option>"
+}
+
+});
+</script>
+<script>
+  var selenium_cups = JSON.parse('{{data["project_folders"] | tojson}}');
+  seleniumcup = document.getElementById("selenium_scan_func");
+//add an event listener
+seleniumcup.addEventListener("change", function() {
+//get the selection box for drinks
+selenium_app = document.getElementById("selenium_app")
+//set its innerHTML to be nothing
+selenium_app.innerHTML = "";
+//if the value from the cups selection box is not nocup (no cup selected)
+if (seleniumcup.value != "nocup")
+{
+  //loop over the different drinks
+  for(var i = 0; i < selenium_cups[seleniumcup.value].length; i++)
+  {
+    //and add them to the drink options drop down
+    selenium_app.innerHTML += "<option>" + selenium_cups[seleniumcup.value][i] + "</option>";
+  }
+}
+//otherwise, if the cups selection box is "nocup" (no cup is actually selected)
+else
+{
+  //set the drinks selection box back to "No cup selected"
+  selenium_app.innerHTML = "<option>No  selected</option>"
+}
+
+});
+</script>
+<script>
+  var custom_img_cups = JSON.parse('{{data["container_names"] | tojson}}');
+  custom_imgcup = document.getElementById("custom_img_scan_func");
+//add an event listener
+custom_imgcup.addEventListener("change", function() {
+//get the selection box for drinks
+custom_img_app = document.getElementById("cus_img_app")
+//set its innerHTML to be nothing
+custom_img_app.innerHTML = "";
+//if the value from the cups selection box is not nocup (no cup selected)
+if (custom_imgcup.value != "nocup")
+{
+  //loop over the different drinks
+  for(var i = 0; i < custom_img_cups[custom_imgcup.value].length; i++)
+  {
+    //and add them to the drink options drop down
+    custom_img_app.innerHTML += "<option>" + custom_img_cups[custom_imgcup.value][i] + "</option>";
+  }
+}
+//otherwise, if the cups selection box is "nocup" (no cup is actually selected)
+else
+{
+  //set the drinks selection box back to "No cup selected"
+  custom_img_app.innerHTML = "<option>No  selected</option>"
+}
+
+});
+</script>
+{% endblock javascripts %}

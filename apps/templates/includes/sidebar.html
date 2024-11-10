@@ -1,0 +1,327 @@
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar navigation elevation-4">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul
+        class="nav nav-pills nav-sidebar flex-column"
+        data-widget="treeview"
+        role="menu"
+        data-accordion="false"
+      >
+        <li>
+          <a href="/" class="brand-link">
+            <img
+              src="/static/assets/img/deltaphi.png"
+              alt="Deltaphi Logo"
+              class="brand-image img-circle elevation-3"
+              style="
+                opacity: 0.8;
+                border: 2px solid #ffffff; /* Changed border color to white and increased border size */
+                margin-top: 10px;
+                margin-left: 0px;
+              "
+            />
+            <span class="title">DLPL TR Tool</span>
+          </a>
+        </li>
+
+        <li class="{% if segment == 'index' %}active{% endif %}">
+          <a href="index">
+            <span class="icon">
+              <ion-icon name="home-outline"></ion-icon>
+            </span>
+            <span class="title">Dashboard</span>
+          </a>
+        </li>
+        <li class="{% if segment == 'project' %}active{% endif %}">
+          <a href="Project">
+            <span class="icon">
+              <ion-icon name="construct-outline"></ion-icon>
+            </span>
+            <span class="title">Project</span>
+          </a>
+        </li>
+
+        <li class="{% if segment == 'duts' %}active{% endif %}">
+          <a href="Dut_Configuration">
+            <span class="icon">
+              <ion-icon name="settings-outline"></ion-icon>
+            </span>
+            <span class="title">Dut Configuration</span>
+          </a>
+        </li>
+
+        <li class="{% if segment == 'report' %}active{% endif %}">
+          <a href="reports">
+            <span class="icon">
+              <ion-icon name="document-text-outline"></ion-icon>
+            </span>
+            <span class="title">Reports</span>
+          </a>
+        </li>
+
+        <li class="{% if segment == 'agent' %}active{% endif %}">
+          <a href="agent_management">
+            <span class="icon">
+              <ion-icon name="person-outline"></ion-icon>
+            </span>
+            <span class="title">Agent</span>
+          </a>
+        </li>
+
+        <li class="{% if segment == 'engineers' %}active{% endif %}">
+          <a href="/engineers">
+            <span class="icon">
+              <ion-icon name="people-outline"></ion-icon>
+            </span>
+            <span class="title">Engineers</span>
+          </a>
+        </li>
+        <li style="margin-top: 400px">
+          <a href="{{ url_for('authentication_blueprint.logout') }}">
+            <span class="icon">
+              <ion-icon name="log-out-outline"></ion-icon>
+            </span>
+            <span class="title">Logout</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div>
+  <!-- /.sidebar -->
+</aside>
+<script
+  type="module"
+  src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+></script>
+<script
+  nomodule
+  src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+></script>
+<style>
+  /* =========== Google Fonts ============ */
+  @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+
+  /* =============== Globals ============== */
+  * {
+    font-family: "Ubuntu", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --blue: #1a1a1a;
+    --white: #fff;
+    --black1: #222;
+    --black2: #999;
+    --gray: #f3f2f2;
+  }
+
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .container {
+    position: relative;
+    width: 100%;
+  }
+
+  /* =============== Navigation ================ */
+  .navigation {
+    position: fixed;
+    width: 250px;
+    height: 100%;
+    background: var(--blue);
+    border-left: 10px solid var(--blue);
+    transition: 0.5s;
+    overflow: hidden;
+  }
+
+  .navigation.active {
+    width: 80px;
+  }
+
+  .navigation ul {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .navigation ul li {
+    position: relative;
+    width: 100%;
+    list-style: none;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+  }
+
+  .navigation ul li.active {
+    background-color: #ffffff; /* White background for active page */
+    color: var(--blue); /* Keep text color as blue */
+  }
+
+  .navigation ul li:hover {
+    background-color: #e0e0e0; /* Gray background for hovered items */
+    color: var(--blue); /* Keep text color as blue */
+  }
+
+  .navigation ul li:nth-child(1) {
+    margin-bottom: 40px;
+    pointer-events: none;
+  }
+
+  .navigation ul li a {
+    position: relative;
+    display: block;
+    width: 100%;
+    display: flex;
+    text-decoration: none;
+    color: var(--white);
+  }
+
+  .navigation ul li.active a {
+    color: var(--blue); /* Blue text for active page */
+  }
+
+  .navigation ul li:hover a {
+    color: var(--blue); /* Blue text for hovered items */
+  }
+
+  .navigation ul li a .icon {
+    position: relative;
+    display: block;
+    min-width: 60px;
+    height: 60px;
+    line-height: 75px;
+    text-align: center;
+  }
+
+  .navigation ul li a .icon ion-icon {
+    font-size: 1.75rem;
+  }
+
+  .navigation ul li a .title {
+    position: relative;
+    display: block;
+    padding: 0 10px;
+    height: 60px;
+    line-height: 60px;
+    text-align: start;
+    white-space: nowrap;
+  }
+  /* Active page (white curves) */
+  .navigation ul li.active a::before,
+  .navigation ul li.active a::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: -50px;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 35px 35px 0 10px #ffffff; /* White curve for active */
+    pointer-events: none;
+  }
+
+  .navigation ul li.active a::after {
+    top: auto;
+    bottom: -50px;
+    box-shadow: 35px -35px 0 10px #ffffff; /* White curve for active */
+  }
+
+  /* Hovered items (gray curves) */
+  .navigation ul li:hover a::before,
+  .navigation ul li:hover a::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: -50px;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 35px 35px 0 10px #e0e0e0; /* Gray curve for hover */
+    pointer-events: none;
+  }
+
+  .navigation ul li:hover a::after {
+    top: auto;
+    bottom: -50px;
+    box-shadow: 35px -35px 0 10px #e0e0e0; /* Gray curve for hover */
+  }
+  /* Ensure toggle icon is always visible */
+  .toggle-icon {
+    display: block; /* Always show the toggle icon */
+  }
+
+  /* Hide sidebar on screens smaller than 993px */
+  @media (max-width: 993px) {
+    .navigation {
+      display: none; /* Hide sidebar by default on small screens */
+    }
+
+    .navigation.active {
+      display: block; /* Show sidebar when active */
+    }
+  }
+
+  /* Adjust visibility for larger screens */
+  @media (min-width: 993px) {
+    .navigation {
+      display: block; /* Show sidebar by default on larger screens */
+    }
+  }
+</style>
+<script>
+  // Add hovered class to selected list item
+  let list = document.querySelectorAll(".navigation li");
+
+  function activeLink() {
+    list.forEach((item) => {
+      item.classList.remove("hovered");
+    });
+    this.classList.add("hovered");
+  }
+
+  list.forEach((item) => item.addEventListener("mouseover", activeLink));
+
+  // Menu Toggle
+  let toggle = document.querySelector(".toggle");
+  let navigation = document.querySelector(".navigation");
+  let main = document.querySelector(".main");
+  let toggleIcon = document.querySelector(".toggle-icon");
+
+  // Toggle the sidebar on toggle icon click for all screen sizes
+  toggle.onclick = function () {
+    navigation.classList.toggle("active"); // Toggle sidebar active state
+    main.classList.toggle("active"); // Optionally toggle main content styling
+  };
+
+  // Event listener for the toggle icon click (this will call the same function as above)
+  toggleIcon.onclick = function () {
+    navigation.classList.toggle("active"); // Toggle sidebar visibility
+    main.classList.toggle("active"); // Optionally toggle main content styling
+  };
+
+  // Event listener to handle window resizing
+  window.addEventListener("resize", () => {
+    if (window.innerWidth <= 993) {
+      // Ensure sidebar is hidden if not active on small screens
+      if (!navigation.classList.contains("active")) {
+        navigation.classList.remove("active");
+      }
+    } else {
+      // If resizing to larger than 993px, show the sidebar if it was previously active
+      if (navigation.classList.contains("active")) {
+        navigation.classList.add("active");
+      }
+    }
+  });
+</script>

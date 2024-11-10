@@ -1,0 +1,355 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Project {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-options {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  z-index: 1000;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 10px; /* Optional padding */
+  box-sizing: border-box;
+}
+
+.dropdown-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 10px; /* Space between columns */
+  align-items: center; /* Align items in the center vertically */
+}
+
+.dropdown-col {
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Space between rows within the column */
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add ellipsis for long text */
+  white-space: nowrap; /* Prevent line breaks */
+  width: 100%; /* Ensure it takes full width of the column */
+}
+
+.form-check-label {
+  flex: 1; /* Allow label to grow */
+  margin-left: 5px; /* Space between checkbox and label */
+}
+
+.form-control {
+  cursor: pointer;
+}
+
+
+</style>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/assets/plugins/fontawesome-free/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/static/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/assets/css/adminlte.min.css">
+  <link rel="stylesheet" href="/static/assets/plugins/toastr/toastr.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+{% endblock stylesheets %}
+
+{% block content %} 
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    
+    <!-- Page header -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Project</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item active">Project</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <!-- Create Agent Form -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-tools">
+                  <div class="btn-group btn-group-sm">
+                    <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#test_conf"><i class="fas fa-plus"></i></a>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="card-body">
+                <table id="project-table" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th class="text-center">Project Name</th>
+                      <th class="text-center">Authorizer</th>
+                      <th class="text-center">Reporting Manager</th>
+                      <th class="text-center">Test Engineers</th>
+                      <th class="text-center">Created Date</th>
+                      <th class="text-center">Project Type</th>
+                      <th class="text-center">Dut</th>
+                      <th class="text-center">Progress</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for project in projects %}
+                    <tr>
+                      <td class="text-center">{{ project.project_name }}</td>
+                      <td class="text-center">{{ project.authorizer }}</td>
+                      <td class="text-center">{{ project.reporting_manager }}</td>
+                      <td class="text-center">{{ project.engineer_names }}</td>
+                      <td class="text-center">{{ project.created_date }}</td>
+                      <td class="text-center">{{ project.project_type }}</td>
+                      <td class="text-center">{{ project.dut }}</td>
+                      <td class="text-center">{{ project.progress }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="modal fade" id="test_conf">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Add Project</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <div class="tab-content">
+                <div class="active tab-pane" id="project">
+                  <form method="post" action="{{ url_for('home_blueprint.create_project') }}" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="hidden" name="type" value="project_conf" class="form-control">
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="name">Project Name</label>
+                          <input type="text" name="name" class="form-control" required>
+                      </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="Auth">Authorizer</label>
+                          <input type="text" name="Auth" class="form-control" required>
+                      </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="RM">Reporting Manager</label>
+                          <input type="text" name="RM" class="form-control" required>
+                      </div>
+                      </div>
+                      
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="engineer-input">Engineers (select from dropdown)</label>
+                          
+                            <div class="dropdown-container">
+                              <input type="text" name="engineers" id="engineer-input" class="form-control" readonly placeholder="Select engineers">
+                              <div id="dropdown-options" class="dropdown-options">
+                                <!-- Options will be inserted here by JavaScript -->
+                              </div>
+                            </div>
+                           
+                        </div>
+                    </div>
+                    
+                    </div>
+
+                    <div class="row">
+                      
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="Pro_Type">Project Type</label>
+                          <select name="Pro_Type" class="form-control">
+                            <option value="TEC">TEC</option>
+                            <option value="IP101">IP101</option>
+                            
+                            <!-- Add more project types as needed -->
+                          </select>
+                        </div>
+                      </div>
+                    
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="Prog">Progress</label>
+                          <select name="Prog" class="form-control">
+                            <option value="To-Do" selected>To-Do</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="On Hold">On Hold</option>
+                            <option value="Done">Done</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="Dut">Dut</label>
+                          <select  name="Dut" class="form-control">
+                            {% for product_no in product_numbers %}
+                            <option value="{{ product_no }}">{{ product_no }}</option>
+                              {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                                           
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+                </div>  
+              </div>
+              <!-- /.tab-content -->
+            </div><!-- /.card-body -->
+          </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+  </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+  <script src="/static/assets/plugins/jquery/jquery.min.js"></script>
+  <script src="/static/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+  <script src="/static/assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="/static/assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="/static/assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+  <script src="/static/assets/js/adminlte.min.js"></script>
+  <script src="/static/assets/js/demo.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    $(function () {
+  const table = $("#project-table").DataTable({
+    "responsive": true,
+    "autoWidth": false,
+    "columnDefs": [
+      { "className": "text-center", "targets": "_all" }
+    ]
+  });
+});
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Fetch engineers data from the template context
+    const engineers = {{ engineers | tojson }};
+    const dropdownOptions = document.getElementById('dropdown-options');
+    
+    let row = document.createElement('div');
+    row.classList.add('dropdown-row'); // Class for the row
+
+    engineers.forEach((engineer, index) => {
+        const checkbox = document.createElement('div');
+        checkbox.classList.add('form-check');
+        
+        const input = document.createElement('input');
+        input.classList.add('form-check-input');
+        input.type = 'checkbox';
+        input.id = 'engineer-' + engineer.id; // Use engineer ID to avoid conflicts
+        
+        const label = document.createElement('label');
+        label.classList.add('form-check-label');
+        label.htmlFor = 'engineer-' + engineer.id;
+        label.textContent = engineer.employee_name;
+
+        checkbox.appendChild(input);
+        checkbox.appendChild(label);
+        
+        row.appendChild(checkbox);
+
+        // Add a new row every two options
+        if ((index + 1) % 2 === 0) {
+            dropdownOptions.appendChild(row);
+            row = document.createElement('div');
+            row.classList.add('dropdown-row'); // Start a new row
+        }
+    });
+
+    // Handle case where the number of engineers is odd
+    if (engineers.length % 2 !== 0) {
+        dropdownOptions.appendChild(row);
+    }
+    
+    // Toggle dropdown visibility
+    const engineerInput = document.getElementById('engineer-input');
+    engineerInput.addEventListener('click', function() {
+        const isVisible = dropdownOptions.style.display === 'block';
+        dropdownOptions.style.display = isVisible ? 'none' : 'block';
+    });
+    
+    // Update input box with selected values
+    const checkboxes = dropdownOptions.querySelectorAll('.form-check-input');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const selectedValues = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.nextElementSibling.textContent)
+                .join(', ');
+            engineerInput.value = selectedValues;
+        });
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!dropdownOptions.contains(event.target) && event.target !== engineerInput) {
+            dropdownOptions.style.display = 'none';
+        }
+    });
+});
+
+  </script>
+  
+{% endblock javascripts %}

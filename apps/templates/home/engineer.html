@@ -1,0 +1,389 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Engineers {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/assets/plugins/fontawesome-free/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/static/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/assets/css/adminlte.min.css">
+  <link rel="stylesheet" href="/static/assets/plugins/toastr/toastr.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+{% endblock stylesheets %}
+
+{% block content %} 
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    
+    <!-- Page header -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Engineers</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item active">Engineers</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <!-- Create Agent Form -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-tools">
+                  <div class="btn-group btn-group-sm">
+                    <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#test_conf"><i class="fas fa-plus"></i></a>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="card-body">
+                <table id="engineer-table" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th class="text-center">Name</th>
+                      <th class="text-center">Emp ID</th>
+                      <th class="text-center">Email</th>
+                      <th class="text-center">Phone Number</th>
+                      <th class="text-center">Position</th>
+                      <th class="text-center">Company Name</th>
+                      <th class="text-center">Projects</th>
+                      <th class="text-center">Edit</th>
+                      <th class="text-center">Delete</th>
+                      
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for engineer in engineers %}
+                    <tr>
+                      <td class="text-center">{{ engineer.employee_name}}</td>
+                      <td class="text-center">{{ engineer.eng_id}}</td>
+                      <td class="text-center">{{ engineer.email }}</td>
+                      <td class="text-center">{{ engineer.phone_number }}</td>
+                      <td class="text-center">{{ engineer.position }}</td>
+                      <td class="text-center">{{ engineer.company_name }}</td>
+                      <td class="text-center">{{ engineer.projects }}</td>
+                      <td>
+                        <a href="#" data-toggle="modal" data-target="#edit_conf" data-engineer-id="{{ engineer.id }}">
+                          <i class="fas fa-edit"></i>
+                        </a>
+                      </td>
+                      <td class="text-center">
+                        <a
+                          class="btn btn-danger btn-sm"
+                          onclick="confirmDelete('{{ engineer['id'] }}')"
+                        >
+                          <i class="fas fa-trash"></i> Delete
+                        </a>
+                      </td>
+                      
+                      
+                      
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="modal fade" id="test_conf">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Add Engineer</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <div class="tab-content">
+                <div class="active tab-pane" id="engineer">
+                  <form method="post" action="{{ url_for('home_blueprint.create_engineer') }}" enctype="multipart/form-data">
+                    <div class="form-group">
+                      <input type="hidden" name="type" value="engineer_conf" class="form-control">
+                    </div>
+                  
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="employee_name">Name</label>
+                          <input type="text" name="employee_name" class="form-control" required>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="eng_id">Emp ID</label>
+                          <input type="text" name="eng_id" class="form-control" required>
+                        </div>
+                      </div>
+                    </div>
+                  
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="email">Email</label>
+                          <input type="email" name="email" class="form-control" required>
+                        </div>
+                      </div>
+                      
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="phone_number">Phone Number</label>
+                          <input type="tel" name="phone_number" class="form-control" pattern="[0-9]{10}" placeholder="1234567890" required>
+                          <small class="form-text text-muted">Please enter a 10-digit phone number.</small>
+                        </div>
+                      </div>
+                    </div>
+                  
+                   
+
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="position">Position</label>
+                          <input type="text" name="position" class="form-control" required>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="company_name">Company Name</label>
+                          <input type="text" name="company_name" class="form-control" required>
+                        </div>
+                      </div>
+                    </div>
+                  
+                  
+                  
+                    <div class="modal-footer justify-content-between">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </form>
+                </div>  
+              </div>
+              <!-- /.tab-content -->
+            </div><!-- /.card-body -->
+          </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="edit_conf">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Edit Engineer</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body">
+            <form method="post" action="" enctype="multipart/form-data" id="edit-engineer-form">
+              <div class="form-group">
+                <input type="hidden" name="type" value="engineer_conf" class="form-control">
+              </div>
+              <div class="row">
+                
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="eng_id">Emp ID</label>
+                    <input type="text" name="eng_id" class="form-control" id="edit_eng_id" required>
+                  </div>
+                </div>
+              
+            
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" class="form-control" id="edit_email" required>
+                  </div>
+                </div>
+                </div>
+                <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="phone_number">Phone Number</label>
+                    <input type="tel" name="phone_number" class="form-control" id="edit_phone_number" pattern="[0-9]{10}" placeholder="1234567890" required>
+                    <small class="form-text text-muted"></small>
+                  </div>
+                </div>
+            
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="position">Position</label>
+                    <input type="text" name="position" class="form-control" id="edit_position" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="company_name">Company Name</label>
+                    <input type="text" name="company_name" class="form-control" id="edit_company_name" required>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+  <script src="/static/assets/plugins/jquery/jquery.min.js"></script>
+  <script src="/static/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+  <script src="/static/assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="/static/assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="/static/assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+  <script src="/static/assets/js/adminlte.min.js"></script>
+  <script src="/static/assets/js/demo.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    $(function () {
+  const table = $("#engineer-table").DataTable({
+    "responsive": true,
+    "autoWidth": false,
+    "columnDefs": [
+      { "className": "text-center", "targets": "_all" }
+    ]
+  });
+});
+
+
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashMessage = '{{ get_flashed_messages(with_categories=true) | tojson | safe }}';
+        if (flashMessage) {
+            const [category, message] = JSON.parse(flashMessage)[0];
+            if (category === 'success') {
+                Swal.fire('Success', message, 'success');
+            } else if (category === 'error') {
+                Swal.fire('Error', message, 'error');
+            }
+        }
+    });
+</script>
+
+
+<script>
+  $('#edit_conf').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget); // Button that triggered the modal
+    var engineerId = button.data('engineer-id'); // Extract engineer ID from data-* attributes
+  
+    // Make an AJAX call to fetch the engineer details
+    $.ajax({
+      url: '/edit_engineer/' + engineerId,
+      method: 'GET',
+      success: function(data) {
+        // Populate modal fields with returned data
+        $('#edit_eng_id').val(data.eng_id);
+        $('#edit_email').val(data.email);
+        $('#edit_phone_number').val(data.phone_number);
+        $('#edit_position').val(data.position);
+        $('#edit_company_name').val(data.company_name);
+  
+        // Set the form action dynamically
+        $('#edit-engineer-form').attr('action', '/edit_engineer/' + engineerId);
+      }
+    });
+  });
+  </script>
+
+<script>
+  function confirmDelete(engineerId) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Perform the delete action via AJAX
+        $.ajax({
+          url: "{{ url_for('home_blueprint.delete_engineer') }}", // Your Flask route for deleting
+          type: "POST",
+          data: { engineer_id: engineerId }, // Pass the engineer ID
+          success: function (response) {
+            if (response.success) {
+              Swal.fire({
+                title: "Deleted!",
+                text: response.message,
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              }).then(() => {
+                // Redirect to the provided URL
+                window.location.href = response.redirect_url;
+              });
+            } else {
+              Swal.fire({
+                title: "Error",
+                text: response.message,
+                icon: "error",
+              });
+            }
+          },
+          error: function (xhr, status, error) {
+            Swal.fire({
+              title: "Error",
+              text: "Something went wrong: " + error,
+              icon: "error",
+            });
+          },
+        });
+      }
+    });
+  }
+</script>
+
+
+  
+{% endblock javascripts %}

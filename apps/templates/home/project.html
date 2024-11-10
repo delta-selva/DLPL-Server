@@ -1,0 +1,553 @@
+{% extends "layouts/base.html" %} {% block title %} Project {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+    .dropdown-container {
+    position: relative;
+  }
+
+  .dropdown-options {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    z-index: 1000;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px; /* Optional padding */
+    box-sizing: border-box;
+  }
+
+  .dropdown-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 10px; /* Space between columns */
+    align-items: center; /* Align items in the center vertically */
+  }
+
+  .dropdown-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Space between rows within the column */
+  }
+  .form-check {
+    display: flex;
+    align-items: center;
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis for long text */
+    white-space: nowrap; /* Prevent line breaks */
+    width: 100%; /* Ensure it takes full width of the column */
+  }
+
+  .form-check-label {
+    flex: 1; /* Allow label to grow */
+    margin-left: 5px; /* Space between checkbox and label */
+  }
+
+  .form-control {
+    cursor: pointer;
+  }
+  .statusdata {
+    padding: 4px 6px; /* Consistent padding for all statuses */
+    border-radius: 4px;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--white);
+    display: inline-block;
+    width: 160px; /* Fixed width, adjust if needed */
+    height: 30px; /* Fixed height, adjust if needed */
+    text-align: center; /* Center the text horizontally */
+    line-height: 20px; /* Match line-height to height for vertical centering */
+    position: relative; /* For absolute positioning of progress bar */
+    overflow: hidden; /* Ensure progress bar does not overflow */
+  }
+
+  .statusdata.Created {
+    background: #888585;
+  }
+
+  .statusdata.Done {
+    background: #4caf50;
+  }
+
+  .statusdata.To-Do {
+    background: #ab1b0c;
+  }
+
+  .statusdata.In-Progress {
+    background: #ffc107;
+    color: var(--black);
+    position: relative; /* Ensure progress bar is positioned correctly */
+  }
+</style>
+
+<!-- Google Font: Source Sans Pro -->
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+/>
+<!-- Font Awesome -->
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/fontawesome-free/css/all.min.css"
+/>
+<!-- DataTables -->
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css"
+/>
+<!-- Theme style -->
+<link rel="stylesheet" href="/static/assets/css/adminlte.min.css" />
+<link rel="stylesheet" href="/static/assets/plugins/toastr/toastr.min.css" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+/>
+{% endblock stylesheets %} {% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Page header -->
+  <section class="content-header" id="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Project</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Project</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Create Agent Form -->
+          <div class="card" id="scan-table">
+            <div class="card-header">
+              <div class="card-tools">
+                <div class="btn-group btn-group-sm">
+                  <a
+                    href=""
+                    class="btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#test_conf"
+                    ><i class="fas fa-plus"></i
+                  ></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <table
+                id="project-table"
+                class="table table-bordered table-striped"
+              >
+                <thead>
+                  <tr>
+                    <th class="text-center">Project Name</th>
+                    <th class="text-center">Project Type</th>
+                    <th class="text-center">Dut</th>
+                    <th class="text-center">Progress</th>
+                    <th class="text-center">View</th>
+                    <th class="text-center">Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for project in projects %}
+                  <tr>
+                    <td class="text-center">{{ project.project_name }}</td>
+                    <td class="text-center">{{ project.project_type }}</td>
+                    <td class="text-center">{{ project.dut }}</td>
+
+                    <td>
+                      <span
+                        class="statusdata {{ project.progress | replace(' ', '-') }}"
+                      >
+                        {{ project.progress }}
+                      </span>
+                    </td>
+
+                    <td class="text-center">
+                      <form action="{{ url_for('home_blueprint.view_subtypes') }}" method="POST" style="display: inline;">
+                        <input type="hidden" name="project_name" value="{{ project.project_name }}">
+                        <input type="hidden" name="project_type" value="{{ project.project_type }}">
+                        <input type="hidden" name="project_dut" value="{{ project.dut }}">
+                        <button type="submit" style="border: none; background: transparent; margin-left: 5px;">
+                          <i class="fas fa-eye" style="color: #007bff"></i>
+                        </button>
+                      </form>
+                      
+                    </td>
+                    <td>
+                      <!-- Delete Form -->
+                      <form
+                        id="delete-form-{{ project.project_name }}"
+                        action="{{ url_for('home_blueprint.delete_project') }}"
+                        method="POST"
+                        style="display: inline"
+                      >
+                        <input
+                          type="hidden"
+                          name="project_name"
+                          value="{{ project.project_name }}"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-danger btn-sm"
+                          onclick="deleteProject('{{ project.project_name }}');"
+                          style="border: none; background: transparent"
+                        >
+                          <i class="fas fa-trash" style="color: #007bff"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  {% else %}
+                  <tr>
+                    <td colspan="6" class="text-center">
+                      No project details available.
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Report Table, initially hidden -->
+          <!-- <div id="report-section" style="display: none">
+            <section class="content-header">
+              <div class="container-fluid px-0">
+                <div class="row mb-2">
+                  <div class="col-sm-6">
+                    <h1>{{ project_name }}</h1>
+                  </div>
+                </div>
+              </div>
+            </section>
+           
+              <div class="card-body" id="report-container">
+                Files content will be loaded here
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="modal fade" id="test_conf">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Project</h4>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body">
+            <div class="tab-content">
+              <div class="active tab-pane" id="project">
+                <form
+                  method="post"
+                  action="{{ url_for('home_blueprint.create_project') }}"
+                  enctype="multipart/form-data"
+                >
+                  <div class="form-group">
+                    <input
+                      type="hidden"
+                      name="type"
+                      value="project_conf"
+                      class="form-control"
+                    />
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="name">Project Name</label>
+                        <input
+                          type="text"
+                          name="name"
+                          class="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="Auth">Authorizer</label>
+                        <input
+                          type="text"
+                          name="Auth"
+                          class="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="RM">Reporting Manager</label>
+                        <input
+                          type="text"
+                          name="RM"
+                          class="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="engineer-input"
+                          >Engineers</label
+                        >
+
+                        <div class="dropdown-container">
+                          <input
+                            type="text"
+                            name="engineers"
+                            id="engineer-input"
+                            class="form-control"
+                            readonly
+                            placeholder="Select engineers"
+                          />
+                          <div id="dropdown-options" class="dropdown-options">
+                            <!-- Options will be inserted here by JavaScript -->
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="Pro_Type">Project Type</label>
+                        <select name="Pro_Type" class="form-control">
+                          {% for type_name in project_type %}
+                          <option value="{{ type_name }}">
+                            {{ type_name }}
+                          </option>
+                          {% endfor %}
+
+                          <!-- Add more project types as needed -->
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="Dut">Dut</label>
+                        <select name="Dut" class="form-control">
+                          {% for product_no in product_numbers %}
+                          <option value="{{ product_no }}">
+                            {{ product_no }}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="modal-footer justify-content-between">
+                    <button
+                      type="button"
+                      class="btn btn-default"
+                      data-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                      Submit
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <!-- /.tab-content -->
+          </div>
+          <!-- /.card-body -->
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+  </div>
+  
+  </div>
+</div>
+{% endblock content %} {% block javascripts %}
+<script src="/static/assets/plugins/jquery/jquery.min.js"></script>
+<script src="/static/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/static/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/assets/js/adminlte.min.js"></script>
+<script src="/static/assets/js/demo.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+const engineers = {{ engineers | tojson }};
+const dropdownOptions = document.getElementById('dropdown-options');
+const engineerInput = document.getElementById('engineer-input');
+let selectedEngineers = [];
+
+// Create engineer checkboxes and append them to the dropdown
+let row = document.createElement('div');
+row.classList.add('dropdown-row');
+
+engineers.forEach((engineer, index) => {
+  const checkbox = document.createElement('div');
+  checkbox.classList.add('form-check');
+
+  const input = document.createElement('input');
+  input.classList.add('form-check-input');
+  input.type = 'checkbox';
+  input.id = 'engineer-' + engineer.id;
+
+  const label = document.createElement('label');
+  label.classList.add('form-check-label');
+  label.htmlFor = 'engineer-' + engineer.id;
+  label.textContent = engineer.employee_name;
+
+  checkbox.appendChild(input);
+  checkbox.appendChild(label);
+  row.appendChild(checkbox);
+
+  // Every two options create a new row
+  if ((index + 1) % 2 === 0) {
+    dropdownOptions.appendChild(row);
+    row = document.createElement('div');
+    row.classList.add('dropdown-row');
+  }
+
+  // Handle checkbox selection
+  input.addEventListener('change', function() {
+    if (input.checked) {
+      selectedEngineers.push(engineer.employee_name);
+    } else {
+      selectedEngineers = selectedEngineers.filter(name => name !== engineer.employee_name);
+    }
+    engineerInput.value = selectedEngineers.join(', ');
+  });
+});
+
+// If odd number of engineers, append the last row
+if (engineers.length % 2 !== 0) {
+  dropdownOptions.appendChild(row);
+}
+
+// Toggle dropdown visibility
+engineerInput.addEventListener('click', function() {
+  dropdownOptions.style.display = dropdownOptions.style.display === 'none' ? 'block' : 'none';
+});
+
+// Hide dropdown when clicking outside
+document.addEventListener('click', function(event) {
+  if (!engineerInput.contains(event.target) && !dropdownOptions.contains(event.target)) {
+    dropdownOptions.style.display = 'none';
+  }
+});
+});
+
+</script>
+
+<script>
+  $(function () {
+    const table = $("#project-table").DataTable({
+      responsive: true,
+      autoWidth: false,
+      columnDefs: [{ className: "text-center", targets: "_all" }],
+    });
+    $(document).on("click", ".view-report", function (e) {
+      e.preventDefault();
+
+      // Get the project_type and project_name from the data attributes
+      var project_type = $(this).data("project_type");
+      var project_name = $(this).data("project_name");
+      var project_dut = $(this).data("dut");
+
+
+      // Check if the project_type or project_name is missing
+      if (!project_type || !project_name || !project_dut) {
+        console.error("Project Type, Name, or DUT is missing.");
+        return;
+    }
+
+
+      // Update the report section with the selected project_name
+      $("#report-section").show(); // Show the hidden report section
+      $("#report-section h1").text(project_name); // Update project name in the header
+      $("#report-section .breadcrumb-item a").text(project_name); // Set breadcrumb project name
+
+      // AJAX call to fetch the report details for the selected project
+      $.ajax({
+        url: "{{ url_for('home_blueprint.view_subtypes') }}",
+        type: "GET",
+        data: {
+          project_type: project_type,
+          project_name: project_name,
+          project_dut: project_dut,
+        },
+        success: function (response) {
+          $("#content-header").hide(); // Hide the content header
+          $("#scan-table").hide(); // Hide the scan table
+          $("#report-container").html(response); // Inject the HTML response into the report container
+        },
+        error: function (xhr, status, error) {
+          console.error("Error:", error);
+        },
+      });
+    });
+
+    // Back button functionality
+    $("#back-button").click(function () {
+      $("#report-section").hide(); // Hide the report section
+      $("#scan-table").show(); // Show the scan table
+      $("#content-header").show(); // Show the content header
+    });
+  });
+
+  function deleteProject(project_name) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById("delete-form-" + project_name).submit();
+      }
+    });
+  }
+</script>
+
+{% endblock javascripts %}

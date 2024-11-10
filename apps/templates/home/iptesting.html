@@ -1,0 +1,1478 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} IP Testing {% endblock %} 
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/assets/plugins/fontawesome-free/css/all.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/static/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/static/assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/assets/css/adminlte.min.css">
+  <link rel="stylesheet" href="/static/assets/plugins/toastr/toastr.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+{% endblock stylesheets %}
+
+{% block content %} 
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <div>
+      <!-- Begin alerts -->                
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      {% if category == 'success' %}
+            <body onload="doMyAlerts('{{message}}','{{category}}');"></body>
+            <script>
+                function doMyAlerts(message,category)
+                        {
+                            swal.fire({
+                            title: "Success",
+                            text: message,
+                            icon: category,
+                            closeOnConfirm: false
+                            });
+                        }
+                </script>
+      {% endif %}
+      {% if category == 'error' %}
+        <body onload="doerrorAlerts('{{message}}','{{category}}');"></body>
+            <script>
+                function doerrorAlerts(message,category)
+                        {
+                            swal.fire({
+                            title: "Error",
+                            text: message,
+                            icon: category,
+                            closeOnConfirm: false
+                            });
+                        }
+                </script>
+      {% endif %}
+      {% if category == 'warning' %}
+        <body onload="doerrorAlerts('{{message}}','{{category}}');"></body>
+            <script>
+                function doerrorAlerts(message,category)
+                        {
+                            swal.fire({
+                            title: "warning",
+                            text: message,
+                            icon: category,
+                            closeOnConfirm: false
+                            });
+                        }
+                </script>
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <!-- End alerts -->
+</div>
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>IP Testing</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item active">IP Testing</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card card-primary card-tabs">
+              <div class="card-header p-0 pt-1">
+                <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                  <li class="nav-item"><a class="nav-link active" href="#dual" data-toggle="tab">Dual IP Layer</a></li>
+                  <li class="nav-item"><a class="nav-link  " href="#IPV6" data-toggle="tab">IPV6</a></li>
+                  <li class="nav-item"><a class="nav-link " href="#IPV4" data-toggle="tab">IPV4</a></li>
+                  <li class="nav-item"><a class="nav-link " href="#Routing" data-toggle="tab">Routing</a></li>
+                  <li class="nav-item"><a class="nav-link " href="#ACCAUTH" data-toggle="tab">Access and Authentication</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#MANAGEMENT" data-toggle="tab">Management</a></li>
+                </ul>
+              </div><!-- /.card-header -->
+              <div class="card-body">
+                <div class="tab-content">
+                  <div class="active  tab-pane" id="dual">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-globe"></i> &nbsp;Dual Test Cases</h3>
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body">
+                            <ul class="nav nav-pills flex-column">
+                              <label for="inputName">IP101 - Dual IP Layer Address Configuration</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip101">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP101
+                                </a>
+                              </li>
+                              <label for="inputName">IP102 - Dual IP layer operation: DNS</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('102.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip102">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP102
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-cog mr-1"></i> &nbsp;Test Configuration</h3>
+                            
+                          </div>
+                          <div class="card-body">
+                            <div class="card card-primary card-outline card-tabs">
+                              <div class="card-header p-0 pt-1 border-bottom-0">
+                                <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                                  <li class="nav-item">
+                                    <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">EUT Setup</a>
+                                  </li>
+                                </ul>
+                              </div>
+                              <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-three-tabContent">
+                                  <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                                    <div class="card">
+                                      <div class="card-header">
+                                        <div class="card-tools">
+                                          <div class="btn-group btn-group-sm">
+                                            <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#test_conf"><i class="fas fa-plus"></i></a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="card-body">
+                                        <div class="table-responsive">
+                                          <table class="table m-0">
+                                            <thead>
+                                            <tr>
+                                              <th class="text-center">Product No</th>
+                                              <th class="text-center">Model No</th>
+                                              <th class="text-center">Product Name</th>
+                                              <th class="text-center">Manufacturer</th>
+                                              <th class="text-center">Serial No</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for iptesting in iptesting_data %}
+                                              <tr>
+                                                <td class="text-center">{{iptesting.product_no}}</td>
+                                                <td class="text-center">{{iptesting.model_no}}</td>
+                                                <td class="text-center">{{iptesting.product_name}}</td>
+                                                <td class="text-center">{{iptesting.manufacturer}}</td>
+                                                <td class="text-center">{{iptesting.serial_no}}
+                                              </tr>
+                                              {% endfor %}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                     
+                                    </div>
+                                  </div>
+                        
+                                </div>
+                              </div>
+                              <!-- /.card -->
+                            </div>
+                            
+                            
+                          </div>
+                        </div>               
+                      </div>
+                      
+                      <!-- /.col -->
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="IPV6">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-globe"></i> &nbsp;IPV6 Test Cases</h3>
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body">
+                            <ul class="nav nav-pills flex-column">
+                              <label for="inputName">IP103 - IPV6 Complete Suite as per RFC 2460</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('104.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip103">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP103
+                                </a>
+                              </li>
+                              <label for="inputName">IP104 - IPV6 Complete Suite as per RFC 4861</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('104.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip104">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP104
+                                </a>
+                              </li>
+                              <label for="inputName">IP105 - IPV6 Complete Suite as per RFC 4862</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('105.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip105">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP105
+                                </a>
+                              </li> 
+                              <label for="inputName">IP106 - IPV6 Complete Suite as per RFC 1981</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('106.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip106">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP106
+                                </a>
+                              </li>
+                              <label for="inputName">IP107 - IPV6 Complete Suite as per RFC 4443</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip102">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP107
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-cog mr-1"></i> &nbsp;Test Configuration</h3>
+                            
+                          </div>
+                          <div class="card-body">
+                            <div class="card card-primary card-outline card-tabs">
+                              <div class="card-header p-0 pt-1 border-bottom-0">
+                                <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                                  <li class="nav-item">
+                                    <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">EUT Setup</a>
+                                  </li>
+                                </ul>
+                              </div>
+                              <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-three-tabContent">
+                                  <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                                    <div class="card">
+                                      <div class="card-header">
+                                        <div class="card-tools">
+                                          <div class="btn-group btn-group-sm">
+                                            <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#test_conf"><i class="fas fa-plus"></i></a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="card-body">
+                                        <div class="table-responsive">
+                                          <table class="table m-0">
+                                            <thead>
+                                            <tr>
+                                              <th class="text-center">Product No</th>
+                                              <th class="text-center">Model No</th>
+                                              <th class="text-center">Product Name</th>
+                                              <th class="text-center">Manufacturer</th>
+                                              <th class="text-center">Serial No</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for iptesting in iptesting_data %}
+                                              <tr>
+                                                <td class="text-center">{{iptesting.product_no}}</td>
+                                                <td class="text-center">{{iptesting.model_no}}</td>
+                                                <td class="text-center">{{iptesting.product_name}}</td>
+                                                <td class="text-center">{{iptesting.manufacturer}}</td>
+                                                <td class="text-center">{{iptesting.serial_no}}
+                                              </tr>
+                                              {% endfor %}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                     
+                                    </div>
+                                  </div>
+                        
+                                </div>
+                              </div>
+                              <!-- /.card -->
+                            </div>
+                            
+                            
+                          </div>
+                        </div>               
+                      </div>
+                      
+                      <!-- /.col -->
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="IPV4">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-globe"></i> &nbsp;IPV4 Test Cases</h3>
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body">
+                            <ul class="nav nav-pills flex-column">
+                              <label for="inputName">IP108 - IPV4 Parameters Set-D</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip101">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP108
+                                </a>
+                              </li>
+                              <label for="inputName">IP114 - TCP Functional Test</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip102">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP114
+                                </a>
+                              </li>
+                          
+                            </ul>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-cog mr-1"></i> &nbsp;Test Configuration</h3>
+                            
+                          </div>
+                          <div class="card-body">
+                            <div class="card card-primary card-outline card-tabs">
+                              <div class="card-header p-0 pt-1 border-bottom-0">
+                                <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                                  <li class="nav-item">
+                                    <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">EUT Setup</a>
+                                  </li>
+                                </ul>
+                              </div>
+                              <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-three-tabContent">
+                                  <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                                    <div class="card">
+                                      <div class="card-header">
+                                        <div class="card-tools">
+                                          <div class="btn-group btn-group-sm">
+                                            <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#test_conf"><i class="fas fa-plus"></i></a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="card-body">
+                                        <div class="table-responsive">
+                                          <table class="table m-0">
+                                            <thead>
+                                            <tr>
+                                              <th class="text-center">Product No</th>
+                                              <th class="text-center">Model No</th>
+                                              <th class="text-center">Product Name</th>
+                                              <th class="text-center">Manufacturer</th>
+                                              <th class="text-center">Serial No</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for iptesting in iptesting_data %}
+                                              <tr>
+                                                <td class="text-center">{{iptesting.product_no}}</td>
+                                                <td class="text-center">{{iptesting.model_no}}</td>
+                                                <td class="text-center">{{iptesting.product_name}}</td>
+                                                <td class="text-center">{{iptesting.manufacturer}}</td>
+                                                <td class="text-center">{{iptesting.serial_no}}
+                                              </tr>
+                                              {% endfor %}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                     
+                                    </div>
+                                  </div>
+                        
+                                </div>
+                              </div>
+                              <!-- /.card -->
+                            </div>
+                            
+                            
+                          </div>
+                        </div>               
+                      </div>
+                      
+                      <!-- /.col -->
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="Routing">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-globe"></i> &nbsp;Routing Test Cases</h3>
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body">
+                            <ul class="nav nav-pills flex-column">
+                              <label for="inputName">IP109 - LDP</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip101">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP109
+                                </a>
+                              </li>
+                              <label for="inputName">IP110 - OSPFv2</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip102">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP110
+                                </a>
+                              </li>
+                              <label for="inputName">IP111 - OSPFv3 For IPV6</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip102">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP111
+                                </a>
+                              </li>
+                              <label for="inputName">IP117 - BGP4</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip102">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP117
+                                </a>
+                              </li>
+                              <label for="inputName">IP118 - BGPV6</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip102">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP118
+                                </a>
+                              </li>
+                              <label for="inputName">IP119 - MBGP</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip102">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP119
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-cog mr-1"></i> &nbsp;Test Configuration</h3>
+                            
+                          </div>
+                          <div class="card-body">
+                            <div class="card card-primary card-outline card-tabs">
+                              <div class="card-header p-0 pt-1 border-bottom-0">
+                                <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                                  <li class="nav-item">
+                                    <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">EUT Setup</a>
+                                  </li>
+                                </ul>
+                              </div>
+                              <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-three-tabContent">
+                                  <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                                    <div class="card">
+                                      <div class="card-header">
+                                        <div class="card-tools">
+                                          <div class="btn-group btn-group-sm">
+                                            <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#test_conf"><i class="fas fa-plus"></i></a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="card-body">
+                                        <div class="table-responsive">
+                                          <table class="table m-0">
+                                            <thead>
+                                            <tr>
+                                              <th class="text-center">Product No</th>
+                                              <th class="text-center">Model No</th>
+                                              <th class="text-center">Product Name</th>
+                                              <th class="text-center">Manufacturer</th>
+                                              <th class="text-center">Serial No</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for iptesting in iptesting_data %}
+                                              <tr>
+                                                <td class="text-center">{{iptesting.product_no}}</td>
+                                                <td class="text-center">{{iptesting.model_no}}</td>
+                                                <td class="text-center">{{iptesting.product_name}}</td>
+                                                <td class="text-center">{{iptesting.manufacturer}}</td>
+                                                <td class="text-center">{{iptesting.serial_no}}
+                                              </tr>
+                                              {% endfor %}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                     
+                                    </div>
+                                  </div>
+                        
+                                </div>
+                              </div>
+                              <!-- /.card -->
+                            </div>
+                            
+                            
+                          </div>
+                        </div>               
+                      </div>
+                      
+                      <!-- /.col -->
+                    </div>
+                  </div>
+                  <div class=" tab-pane" id="ACCAUTH">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-globe"></i> &nbsp;Access and Authentication Test Cases</h3>
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body">
+                            <ul class="nav nav-pills flex-column">
+                              <label for="inputName">IP112 - PPPoE</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip101">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP112
+                                </a>
+                              </li>
+                              <label for="inputName">IP113 - RADIUS</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip102">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP113
+                                </a>
+                              </li>
+                          
+                            </ul>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-cog mr-1"></i> &nbsp;Test Configuration</h3>
+                            
+                          </div>
+                          <div class="card-body">
+                            <div class="card card-primary card-outline card-tabs">
+                              <div class="card-header p-0 pt-1 border-bottom-0">
+                                <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                                  <li class="nav-item">
+                                    <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">EUT Setup</a>
+                                  </li>
+                                </ul>
+                              </div>
+                              <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-three-tabContent">
+                                  <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                                    <div class="card">
+                                      <div class="card-header">
+                                        <div class="card-tools">
+                                          <div class="btn-group btn-group-sm">
+                                            <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#test_conf"><i class="fas fa-plus"></i></a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="card-body">
+                                        <div class="table-responsive">
+                                          <table class="table m-0">
+                                            <thead>
+                                            <tr>
+                                              <th class="text-center">Product No</th>
+                                              <th class="text-center">Model No</th>
+                                              <th class="text-center">Product Name</th>
+                                              <th class="text-center">Manufacturer</th>
+                                              <th class="text-center">Serial No</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for iptesting in iptesting_data %}
+                                              <tr>
+                                                <td class="text-center">{{iptesting.product_no}}</td>
+                                                <td class="text-center">{{iptesting.model_no}}</td>
+                                                <td class="text-center">{{iptesting.product_name}}</td>
+                                                <td class="text-center">{{iptesting.manufacturer}}</td>
+                                                <td class="text-center">{{iptesting.serial_no}}
+                                              </tr>
+                                              {% endfor %}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                     
+                                    </div>
+                                  </div>
+                        
+                                </div>
+                              </div>
+                              <!-- /.card -->
+                            </div>
+                            
+                            
+                          </div>
+                        </div>               
+                      </div>
+                      
+                      <!-- /.col -->
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="MANAGEMENT">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-globe"></i> &nbsp;Management Test Cases</h3>
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body">
+                            <ul class="nav nav-pills flex-column">
+                              <label for="inputName">IP115 - Manageability SNMP V2</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip101">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP115
+                                </a>
+                              </li>
+                              <label for="inputName">IP116 - Manageability SNMP V3</label>
+                              <li class="nav-item ">
+                                <a href="javascript:void(0);" class="nav-link" onclick="openPdf('101.pdf')">
+                                  <i class="fas fa-eye"></i> &nbsp;&nbsp;Work Instructions
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a href="" class="nav-link" data-toggle="modal" data-target="#ip102">
+                                  <i class="fas fa-play"></i> &nbsp;&nbsp;Execute IP116
+                                </a>
+                              </li>
+                          
+                            </ul>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card card-secondary">
+                          <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-cog mr-1"></i> &nbsp;Test Configuration</h3>
+                            
+                          </div>
+                          <div class="card-body">
+                            <div class="card card-primary card-outline card-tabs">
+                              <div class="card-header p-0 pt-1 border-bottom-0">
+                                <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                                  <li class="nav-item">
+                                    <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">EUT Setup</a>
+                                  </li>
+                                </ul>
+                              </div>
+                              <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-three-tabContent">
+                                  <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                                    <div class="card">
+                                      <div class="card-header">
+                                        <div class="card-tools">
+                                          <div class="btn-group btn-group-sm">
+                                            <a href="" class="btn btn-primary" data-toggle="modal"  data-target="#test_conf"><i class="fas fa-plus"></i></a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="card-body">
+                                        <div class="table-responsive">
+                                          <table class="table m-0">
+                                            <thead>
+                                            <tr>
+                                              <th class="text-center">Product No</th>
+                                              <th class="text-center">Model No</th>
+                                              <th class="text-center">Product Name</th>
+                                              <th class="text-center">Manufacturer</th>
+                                              <th class="text-center">Serial No</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for iptesting in iptesting_data %}
+                                              <tr>
+                                                <td class="text-center">{{iptesting.product_no}}</td>
+                                                <td class="text-center">{{iptesting.model_no}}</td>
+                                                <td class="text-center">{{iptesting.product_name}}</td>
+                                                <td class="text-center">{{iptesting.manufacturer}}</td>
+                                                <td class="text-center">{{iptesting.serial_no}}
+                                              </tr>
+                                              {% endfor %}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                     
+                                    </div>
+                                  </div>
+                        
+                                </div>
+                              </div>
+                              <!-- /.card -->
+                            </div>
+                            
+                            
+                          </div>
+                        </div>               
+                      </div>
+                      
+                      <!-- /.col -->
+                    </div>
+                  </div>
+                  </div>
+                  <!-- /.tab-pane -->
+                </div>
+                <!-- /.tab-content -->
+              </div><!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <div class="modal fade" id="test_conf">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">EUT Setup</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="card">
+                <div class="card-body">
+                  <div class="tab-content">
+                    <div class="active tab-pane" id="eut">
+                      <form method="post" action="/iptesting" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <input type="hidden" name="type" value="eut_conf" class="form-control">
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label for="ModelNo">Model No</label>
+                              <input type="text" name="ModelNo" class="form-control">
+                          </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label for="ProductName">Product Name</label>
+                              <input type="text" name="ProductName" class="form-control">
+                          </div>
+                          </div>
+                        </div>
+                        
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label for="Mfg">Brand/Manufacturer</label>
+                              <input type="text" name="Mfg" class="form-control">
+                          </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label for="SN">Serial No</label>
+                              <input type="text" name="SN" class="form-control">
+                          </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label for="SW_Version">Software Version</label>
+                              <input type="text" name="SW_Version" class="form-control">
+                          </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label for="HW_Version">Hardware Version</label>
+                              <input type="text" name="HW_Version" class="form-control">
+                          </div>
+                          </div>
+                        </div>
+                        
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label for="product_no">Prouct No</label>
+                              <input type="text" name="product_no" class="form-control">
+                          </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label for="front_img">Front Image</label>
+                              <input type="file" name="front_img" class="form-control" accept="image/*">
+                          </div>
+                            
+                          </div>
+                        </div>
+                        
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label for="Side_img">Side Image</label>
+                              <input type="file" name="Side_img" class="form-control" accept="image/*">
+                          </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group">
+                              <label for="Port_img">Port Image</label>
+                              <input type="file" name="Port_img" class="form-control" accept="image/*">
+                            </div>
+                          </div>
+                        </div>                        
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                    </div>
+                  </div>
+                  <!-- /.tab-content -->
+                </div><!-- /.card-body -->
+              </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+      </div>
+      </div>
+    </div>
+      <!-- /.modal-dialog -->
+  </div>
+  <div class="modal fade" id="ip101">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">IP101 Testcase Execute</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/iptesting">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="dualIP101" class="form-control">
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="product_no">Select DUT Product No</label>
+                        <select name="product_no" class="form-control custom-select">
+                          {% for prebuild in iptesting_data %}                                               
+                            <option value={{prebuild.product_no}}>
+                            {{prebuild.product_no}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="interfacename">Select Interface</label>
+                        <select name="interfacename" id="sca_scan_func" class="form-control custom-select">
+                          {% for int in interfaces %}
+                          <option value={{int}} >
+                            {{int}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="ipvfour">DUT IPV4 Address</label>
+                        <input type="text" name="ipvfour" class="form-control">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="ipvsix">DUT IPV6 Address</label>
+                        <input type="text" name="ipvsix" class="form-control">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+
+  <div class="modal fade" id="ip102">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">IP102 Testcase Execute</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/iptesting">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="dualIP102" class="form-control">
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="product_no">Select DUT Product No</label>
+                        <select name="product_no" class="form-control custom-select">
+                          {% for prebuild in iptesting_data %}                                               
+                            <option value={{prebuild.product_no}}>
+                            {{prebuild.product_no}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="interfacename">Select Interface</label>
+                        <select name="interfacename" id="sca_scan_func" class="form-control custom-select">
+                          {% for int in interfaces %}
+                          <option value={{int}} >
+                            {{int}}
+                          </option>
+                          {% endfor %}
+                        </select>
+            
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="ipvfour">DUT IPV4 Address</label>
+                        <input type="text" name="ipvfour" class="form-control">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="ipvsix">DUT IPV6 Address</label>
+                        <input type="text" name="ipvsix" class="form-control">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label for="domain">Testing Domain Name </label>
+                      <input type="text" name="domain" class="form-control">
+                    </div>
+                  </div>
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+  <div class="modal fade" id="ip103">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">IP103 Testcase Execute</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/iptesting">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="dualIP103" class="form-control">
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="product_no">Select DUT Product No</label>
+                        <select name="product_no" class="form-control custom-select">
+                          {% for prebuild in iptesting_data %}                                               
+                            <option value={{prebuild.product_no}}>
+                            {{prebuild.product_no}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="interfacename">Select Interface</label>
+                        <select name="interfacename" id="sca_scan_func" class="form-control custom-select">
+                          {% for int in interfaces %}
+                          <option value={{int}} >
+                            {{int}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="ipvsix_src">Source IPV6 Address</label>
+                        <input type="text" name="ipvsix_src" class="form-control">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="ipvsix">DUT IPV6 Address</label>
+                        <input type="text" name="ipvsix" class="form-control">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+  <div class="modal fade" id="ip104">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">IP104 Testcase Execute</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/iptesting">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="IP104" class="form-control">
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="product_no">Select DUT Product No</label>
+                        <select name="product_no" class="form-control custom-select">
+                          {% for prebuild in iptesting_data %}                                               
+                            <option value={{prebuild.product_no}}>
+                            {{prebuild.product_no}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="interfacename">Select Interface</label>
+                        <select name="interfacename" id="sca_scan_func" class="form-control custom-select">
+                          {% for int in interfaces %}
+                          <option value={{int}} >
+                            {{int}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="ipvsix_src">Source IPV6 Address</label>
+                        <input type="text" name="ipvsix_src" class="form-control">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="ipvsix">DUT IPV6 Address</label>
+                        <input type="text" name="ipvsix" class="form-control">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+  <div class="modal fade" id="ip105">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">IP105 Testcase Execute</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/iptesting">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="IP105" class="form-control">
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="product_no">Select DUT Product No</label>
+                        <select name="product_no" class="form-control custom-select">
+                          {% for prebuild in iptesting_data %}                                               
+                            <option value={{prebuild.product_no}}>
+                            {{prebuild.product_no}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="interfacename">Select Interface</label>
+                        <select name="interfacename" id="sca_scan_func" class="form-control custom-select">
+                          {% for int in interfaces %}
+                          <option value={{int}} >
+                            {{int}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="ipvsix_src">Source IPV6 Address</label>
+                        <input type="text" name="ipvsix_src" class="form-control">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="ipvsix">DUT IPV6 Address</label>
+                        <input type="text" name="ipvsix" class="form-control">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+
+  <div class="modal fade" id="ip106">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">IP106 Testcase Execute</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+              <!--<div class="active tab-pane" id="local">-->
+                <form method="post" action="/iptesting">
+                  <div class="form-group">
+                    <input type="hidden" name="type" value="IP106" class="form-control">
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="product_no">Select DUT Product No</label>
+                        <select name="product_no" class="form-control custom-select">
+                          {% for prebuild in iptesting_data %}                                               
+                            <option value={{prebuild.product_no}}>
+                            {{prebuild.product_no}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="interfacename">Select Interface</label>
+                        <select name="interfacename" id="sca_scan_func" class="form-control custom-select">
+                          {% for int in interfaces %}
+                          <option value={{int}} >
+                            {{int}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- /.card-body -->
+                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              <!--</div>-->
+          </div>
+          
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  </div>
+  </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- jQuery -->
+  <script src="/static/assets/plugins/jquery/jquery.min.js"></script>
+  <!-- Bootstrap 4 -->
+  <script src="/static/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- DataTables -->
+  <script src="/static/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+  <script src="/static/assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="/static/assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="/static/assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+  <!-- AdminLTE App -->
+  <script src="/static/assets/js/adminlte.min.js"></script>
+  <!-- AdminLTE for demo purposes -->
+  <script src="/static/assets/js/demo.js"></script>
+  <script>
+    function openPdf(filename) {
+        window.open("/pdf/" + filename, "_blank");
+    }
+</script>
+  <!-- page script -->
+  <script>
+    $(function () {
+      $("#example1").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+      });
+      $('#example2').DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+    });
+  </script>
+
+ 
+
+<script>
+  var sca_cups = JSON.parse('{interfaces | tojson}}');
+sca_cup = document.getElementById("sca_scan_func");
+//add an event listener
+sca_cup.addEventListener("change", function() {
+//get the selection box for drinks
+sca_app = document.getElementById("sca_app")
+//set its innerHTML to be nothing
+sca_app.innerHTML = "";
+//if the value from the cups selection box is not nocup (no cup selected)
+if (sca_cup.value != "nocup")
+{
+  //loop over the different drinks
+  for(var i = 0; i < sca_cups[sca_cup.value].length; i++)
+  {
+    //and add them to the drink options drop down
+    sca_app.innerHTML += "<option>" + sca_cups[sca_cup.value][i] + "</option>";
+  }
+}
+//otherwise, if the cups selection box is "nocup" (no cup is actually selected)
+else
+{
+  //set the drinks selection box back to "No cup selected"
+  sca_app.innerHTML = "<option>No cup selected</option>"
+}
+
+});
+</script>
+
+{% endblock javascripts %}

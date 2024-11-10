@@ -1,0 +1,14 @@
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const flashMessages = {{ get_flashed_messages(with_categories=true) | tojson | safe }};
+
+      if (flashMessages.length > 0) {
+          const [category, message] = flashMessages[0]; // Only display the first message for this page
+          if (category === 'success') {
+              Swal.fire('Success', message, 'success');
+          } else if (category === 'error') {
+              Swal.fire('Error', message, 'error');
+          }
+      }
+  });
+</script>

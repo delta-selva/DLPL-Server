@@ -1,0 +1,651 @@
+{% extends "layouts/base.html" %} {% block title %} Dut Configuration {%
+endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+<!-- Google Font: Source Sans Pro -->
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+/>
+<!-- Font Awesome -->
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/fontawesome-free/css/all.min.css"
+/>
+<!-- DataTables -->
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="/static/assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css"
+/>
+<!-- Theme style -->
+<link rel="stylesheet" href="/static/assets/css/adminlte.min.css" />
+<link rel="stylesheet" href="/static/assets/plugins/toastr/toastr.min.css" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+/>
+{% endblock stylesheets %} {% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <div>
+    <!-- Begin alerts -->
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %} {% if category ==
+    'success' %}
+    <body onload="doMyAlerts('{{message}}','{{category}}');"></body>
+    <script>
+      function doMyAlerts(message, category) {
+        swal.fire({
+          title: "Success",
+          text: message,
+          icon: category,
+          closeOnConfirm: false,
+        });
+      }
+    </script>
+    {% endif %} {% if category == 'error' %}
+    <body onload="doerrorAlerts('{{message}}','{{category}}');"></body>
+    <script>
+      function doerrorAlerts(message, category) {
+        swal.fire({
+          title: "Error",
+          text: message,
+          icon: category,
+          closeOnConfirm: false,
+        });
+      }
+    </script>
+    {% endif %} {% if category == 'warning' %}
+    <body onload="doerrorAlerts('{{message}}','{{category}}');"></body>
+    <script>
+      function doerrorAlerts(message, category) {
+        swal.fire({
+          title: "warning",
+          text: message,
+          icon: category,
+          closeOnConfirm: false,
+        });
+      }
+    </script>
+    {% endif %} {% endfor %} {% endif %} {% endwith %}
+
+    <!-- End alerts -->
+  </div>
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Duts Configuration</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Duts Configuration</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-tools">
+                <div class="btn-group btn-group-sm">
+                  <a
+                    href=""
+                    class="btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#test_conf"
+                    ><i class="fas fa-plus"></i
+                  ></a>
+                </div>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th class="text-center">Dut.No</th>
+                    <th class="text-center">Product No</th>
+                    <th class="text-center">Model No</th>
+                    <th class="text-center">Product Name</th>
+                    <th class="text-center">Manufacturer</th>
+                    <th class="text-center">Serial No</th>
+                    <th class="text-center">Software Version</th>
+                    <th class="text-center">Hardware Version</th>
+                    <th class="text-center">Edit</th>
+                    <th class="text-center">Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for dut in eut_configurations %}
+                  <tr>
+                    <td class="text-center">{{ loop.index }}</td>
+                    <td class="text-center">{{ dut.product_no }}</td>
+                    <td class="text-center">{{ dut.model_no }}</td>
+                    <td class="text-center">{{ dut.product_name }}</td>
+                    <td class="text-center">{{ dut.manufacturer }}</td>
+                    <td class="text-center">{{ dut.serial_no }}</td>
+                    <td class="text-center">{{ dut.software_version }}</td>
+                    <td class="text-center">{{ dut.hardware_version }}</td>
+                    <td class="text-center">
+                      <a
+                        href="#"
+                        data-toggle="modal"
+                        data-target="#edit_conf"
+                        data-dut-id="{{ dut.id }}"
+                        data-product-no="{{ dut.product_no }}"
+                        data-model-no="{{ dut.model_no }}"
+                        data-product-name="{{ dut.product_name }}"
+                        data-manufacturer="{{ dut.manufacturer }}"
+                        data-serial-no="{{ dut.serial_no }}"
+                        data-software-version="{{ dut.software_version }}"
+                        data-hardware-version="{{ dut.hardware_version }}"
+                      >
+                        <i class="fas fa-edit"></i>
+                      </a>
+                    </td>
+
+                    <td class="text-center">
+                      <a
+                        class="btn btn-danger btn-sm"
+                        href="/Dut_Configuration?delete={{ dut.id }}"
+                      >
+                        <i class="fas fa-trash"></i> Delete
+                      </a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  <!-- <tr>
+                    <td colspan="7">
+                      Debug: {{ iptesting_data|length }} records found
+                    </td>
+                  </tr> -->
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <div class="modal fade" id="test_conf">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">EUT Setup</h4>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="card">
+              <div class="card-body">
+                <div class="tab-content">
+                  <div class="active tab-pane" id="eut">
+                    <form
+                      method="post"
+                      action="/Dut_Configuration"
+                      enctype="multipart/form-data"
+                    >
+                      <div class="form-group">
+                        <input
+                          type="hidden"
+                          name="type"
+                          value="eut_conf"
+                          class="form-control"
+                        />
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="ModelNo">Model No</label>
+                            <input
+                              type="text"
+                              name="ModelNo"
+                              class="form-control"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="ProductName">Product Name</label>
+                            <input
+                              type="text"
+                              name="ProductName"
+                              class="form-control"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="Mfg">Brand/Manufacturer</label>
+                            <input
+                              type="text"
+                              name="Mfg"
+                              class="form-control"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="SN">Serial No</label>
+                            <input type="text" name="SN" class="form-control" required/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="SW_Version">Software Version</label>
+                            <input
+                              type="text"
+                              name="SW_Version"
+                              class="form-control"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="HW_Version">Hardware Version</label>
+                            <input
+                              type="text"
+                              name="HW_Version"
+                              class="form-control"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="product_no">Prouct No</label>
+                            <input
+                              type="text"
+                              name="product_no"
+                              class="form-control"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="front_img">Front Image</label>
+                            <input
+                              type="file"
+                              name="front_img"
+                              class="form-control"
+                              accept="image/*"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="Side_img">Side Image</label>
+                            <input
+                              type="file"
+                              name="Side_img"
+                              class="form-control"
+                              accept="image/*"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="Port_img">Port Image</label>
+                            <input
+                              type="file"
+                              name="Port_img"
+                              class="form-control"
+                              accept="image/*"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="modal-footer justify-content-between">
+                        <button
+                          type="button"
+                          class="btn btn-default"
+                          data-dismiss="modal"
+                        >
+                          Close
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                          Submit
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <!-- /.tab-content -->
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="edit_conf">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Edit EUT Setup</h4>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="card">
+              <div class="card-body">
+                <div class="tab-content">
+                  <div class="active tab-pane" id="edit_eut">
+                    <form method="post" action="" enctype="multipart/form-data">
+
+                      <div class="form-group">
+                        <input
+                          type="hidden"
+                          name="type"
+                          value="edit_eut_conf"
+                          class="form-control"
+                        />
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="ModelNo">Model No</label>
+                            <input
+                              type="text"
+                              name="ModelNo"
+                              class="form-control"
+                              id="edit_ModelNo"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="ProductName">Product Name</label>
+                            <input
+                              type="text"
+                              name="ProductName"
+                              class="form-control"
+                              id="edit_ProductName"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="Mfg">Brand/Manufacturer</label>
+                            <input
+                              type="text"
+                              name="Manufacturer"
+                              class="form-control"
+                              id="edit_Manufacturer"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="SN">Serial No</label>
+                            <input
+                              type="text"
+                              name="SerialNo"
+                              class="form-control"
+                              id="edit_SerialNo"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="SW_Version">Software Version</label>
+                            <input
+                              type="text"
+                              name="SoftwareVersion"
+                              class="form-control"
+                              id="edit_SoftwareVersion"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="HW_Version">Hardware Version</label>
+                            <input
+                              type="text"
+                              name="HardwareVersion"
+                              class="form-control"
+                              id="edit_HardwareVersion"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="product_no">Prouct No</label>
+                            <input
+                              type="text"
+                              name="product_no"
+                              class="form-control"
+                              id="edit_product_no"
+                            />
+                          </div>
+                        </div>
+                        <!-- <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="front_img">Front Image</label>
+                            <input
+                              type="file"
+                              name="front_img"
+                              class="form-control"
+                              id="edit_front_img"
+                              accept="image/*" -->
+                            <!-- /> -->
+                            <!-- Display current image if exists -->
+                            <!-- {% for dut in eut_configurations %} {% if
+                            dut.front_image %}
+                            <img
+                              src="data:image/jpeg;base64,{{ dut.front_image }}"
+                              alt="Current Front Image"
+                              style="max-width: 100px"
+                            />
+                            {% endif %} {% endfor %}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="Side_img">Side Image</label>
+                            <input
+                              type="file"
+                              name="Side_img"
+                              class="form-control"
+                              id="edit_Side_img"
+                              accept="image/*"
+                            />
+                            {% for dut in eut_configurations %} {% if
+                            dut.side_image %}
+                            <img
+                              src="data:image/jpeg;base64,{{ dut.side_image }}"
+                              alt="Current Side Image"
+                              style="max-width: 100px"
+                            />
+                            {% endif %} {% endfor %}
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label for="Port_img">Port Image</label>
+                            <input
+                              type="file"
+                              name="Port_img"
+                              class="form-control"
+                              id="edit_Port_img"
+                              accept="image/*"
+                            />
+                            {% for dut in eut_configurations %} {% if
+                            dut.port_image %}
+                            <img
+                              src="data:image/jpeg;base64,{{ dut.port_image }}"
+                              alt="Current Port Image"
+                              style="max-width: 100px"
+                            />
+                            {% endif %} {% endfor %}
+                          </div>
+                        </div>
+                      </div> -->
+
+                      <div class="modal-footer justify-content-between">
+                        <button
+                          type="button"
+                          class="btn btn-default"
+                          data-dismiss="modal"
+                        >
+                          Close
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                          Submit
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <!-- /.tab-content -->
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+      </div>
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- jQuery -->
+<script src="/static/assets/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables -->
+<script src="/static/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/static/assets/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="/static/assets/js/demo.js"></script>
+<!-- page script -->
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      responsive: true,
+      autoWidth: false,
+    });
+    $("#example2").DataTable({
+      paging: true,
+      lengthChange: false,
+      searching: false,
+      ordering: true,
+      info: true,
+      autoWidth: false,
+      responsive: true,
+    });
+  });
+</script>
+<script>
+  $("#edit_conf").on("show.bs.modal", function (event) {
+    var button = $(event.relatedTarget); // Button that triggered the modal
+    var dutId = button.data("dut-id");
+    var modelNo = button.data("model-no");
+    var productName = button.data("product-name");
+    var manufacturer = button.data("manufacturer");
+    var serialNo = button.data("serial-no");
+    var softwareVersion = button.data("software-version");
+    var hardwareVersion = button.data("hardware-version");
+    var front_img = button.data("front_img");
+    var side_img = button.data("side_img");
+    var port_img = button.data("port_img");
+    var product_no = button.data("product-no");
+
+    // Now populate the modal fields
+    var modal = $(this);
+    modal.find("#edit_ModelNo").val(modelNo);
+    modal.find("#edit_ProductName").val(productName);
+    modal.find("#edit_Manufacturer").val(manufacturer);
+    modal.find("#edit_SerialNo").val(serialNo);
+    modal.find("#edit_SoftwareVersion").val(softwareVersion);
+    modal.find("#edit_HardwareVersion").val(hardwareVersion);
+    modal.find("#edit_front_img").val(front_img);
+    modal.find("#edit_Side_img").val(side_img);
+    modal.find("#edit_Port_img").val(port_img);
+    modal.find("#edit_product_no").val(product_no);
+
+    // Set form action to include the DUT ID for backend handling
+    modal.find("form").attr("action", "/Dut_Configuration/edit/" + dutId);
+  });
+</script>
+
+{% endblock javascripts %}
