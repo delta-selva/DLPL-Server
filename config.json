@@ -1,0 +1,13 @@
+{
+  "ssh_credentials": {
+    "ssh_username": "devsecops",
+    "ssh_password": "cyber"
+  },
+  "project_types": [
+    "ITSAR-Router",
+    "ITSAR-Wifi",
+    "ITSAR-ONT",
+    "ITSAR-OLT",
+    "TEC"
+  ]
+}
